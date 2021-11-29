@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 
 class Task(models.Model):
@@ -14,8 +16,14 @@ class Task(models.Model):
     completed = models.BooleanField(default=False)
 
     # Created/completed dates
-    created_date = models.DateTimeField()
+    created_date = models.DateTimeField(auto_now_add=True)
     completed_date = models.DateTimeField(null=True)
 
     # Status
     active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['-created_date']
+
+    def __str__(self):
+        return f'Task "{self.task_name}" created on {self.created_date.strftime("%m/%d/%y")}'

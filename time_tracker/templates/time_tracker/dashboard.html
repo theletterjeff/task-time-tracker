@@ -5,10 +5,13 @@
     <meta charset="UTF-8">
     <title>Time Tracker</title>
     <meta name="author" content="Jeff Martin">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'time_tracker/style.css' %}">
 </head>
 
 <body>
 
+    <!-- Header -->
     <div class="header">
         <header>
             <h1>Time Tracker</h1>
@@ -16,16 +19,44 @@
         </header>
     </div>
 
+    <!-- Enter new tasks -->
     <div class="logger">
         <h2>Enter a task</h2>
     </div>
 
+    <!-- Display current active tasks -->
     <div class="active_tasks">
         <h2>Active Tasks</h2>
     </div>
 
+    <!-- Dispaly all tasks -->
     <div class="all_tasks">
         <h2>All Tasks</h2>
+        <table>
+            <colgroup id="all_task_cols">
+                <col width="15%" style="background-color:#d8d7d7">
+                <col width="15%" style="background-color:white">
+                <col width="15%" style="background-color:#d8d7d7">
+                <col width="15%" style="background-color:white">
+                <col width="15%" style="background-color:#d8d7d7">
+            </colgroup>
+            <tr>
+                <th>Task Name</th>
+                <th>Created</th>
+                <th>Estimated Time</th>
+                <th>Actual Time</th>
+                <th>Completed</th>
+            </tr>
+            {% for task in all_tasks %}
+                <tr>
+                    <td>{{ task.task_name }}</td>
+                    <td>{{ task.created_date }}</td>
+                    <td>{{ task.expected_mins }}</td>
+                    <td>{{ task.actual_mins|default_if_none:'--' }}</td>
+                    <td>{{ task.completed }}</td>
+                </tr>
+            {% endfor %}
+            </table>
     </div>
 
 </body>
