@@ -7,6 +7,7 @@
     <meta name="author" content="Jeff Martin">
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'time_tracker/style.css' %}">
+    {% load crispy_forms_tags %}
 </head>
 
 <body>
@@ -22,6 +23,11 @@
     <!-- Enter new tasks -->
     <div class="logger">
         <h2>Enter a task</h2>
+        <form method="post"}>
+            {{ new_task_form | crispy }}
+            {% csrf_token %}
+            <button type="submit">Create Task</button>
+        </form>
     </div>
 
     <!-- Display current active tasks -->
@@ -49,7 +55,7 @@
             </tr>
             {% for task in all_tasks %}
                 <tr>
-                    <td>{{ task.task_name }}</td>
+                    <td><a href="{% url 'task_detail' task.id%}">{{ task.task_name }}</a></td>
                     <td>{{ task.created_date }}</td>
                     <td>{{ task.expected_mins }}</td>
                     <td>{{ task.actual_mins|default_if_none:'--' }}</td>

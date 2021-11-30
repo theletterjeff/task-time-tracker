@@ -26,4 +26,4 @@ class Task(models.Model):
         ordering = ['-created_date']
 
     def __str__(self):
-        return f'Task "{self.task_name}" created on {self.created_date.strftime("%m/%d/%y")}'
+        return f'"{self.task_name}" created on {self.created_date.strftime("%m/%d/%y")}'
