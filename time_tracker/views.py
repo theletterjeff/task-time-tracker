@@ -11,9 +11,13 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.views.generic import ListView
+
+from django_tables2 import SingleTableView
 
 from .forms import NewTaskForm
 from .models import Task
+from .tables import InactiveTaskTable
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +64,23 @@ def task_detail(request, task_id):
     task_str = get_object_or_404(Task, pk=task_id)
     return HttpResponse(f'Detail page for {task_str}.')
 
+<<<<<<< HEAD
 def index(request):
     template = 'time_tracker/index.html'
     return render(request, template)
+=======
+class InactiveTaskListView(SingleTableView):
+    model = Task
+    table_class = InactiveTaskTable
+    template_name = 'time_tracker/inactive_tasks.html'
+
+def inactive_tasks(request):
+    table = InactiveTaskTable(
+        Task.objects.filter(active=False, completed=False)
+    )
+    return render(
+        request,
+        'time_tracker/inactive_tasks.html',
+        {'table': table}
+    )
+>>>>>>> 20858b8 (WIP inactive task page)
