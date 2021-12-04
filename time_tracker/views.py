@@ -25,9 +25,10 @@ def dashboard(request):
     # Template path
     template = 'time_tracker/dashboard.html'
 
-    # Task data (all and active)
-    all_tasks = Task.objects.order_by('-created_date')
-    active_tasks = [task for task in all_tasks if task.active == True]
+    # Read in task data (active, inactive, completed)
+    active_tasks = Task.objects.filter(active=True, completed=False)
+    inactive_tasks = Task.objects.filter(active=False, completed=False)
+    completed_tasks = Task.objects.filter(completed=True)
 
     # New task form
     if request.method == 'POST':
@@ -45,7 +46,8 @@ def dashboard(request):
     context = {
         'new_task_form': new_task_form,
         'active_tasks': active_tasks, 
-        'all_tasks': all_tasks,   
+        'inactive_tasks': inactive_tasks,
+        'completed_tasks': completed_tasks,  
     }
     return render(request, template, context)
 
