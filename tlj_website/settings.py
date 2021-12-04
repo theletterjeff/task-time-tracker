@@ -49,7 +49,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'time_tracker.middleware.UpdateActiveStatus',
 ]
 
 ROOT_URLCONF = 'tlj_website.urls'
