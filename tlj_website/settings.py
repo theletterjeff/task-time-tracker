@@ -136,5 +136,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 QCLUSTER = {
     'name': 'tlj_website',
-    'orm': 'default',
+    'timeout': 30,
+    'retry': 60,
+    'redis': {
+        'host': '127.0.0.1',
+        'db': 0,
+    },
 }

@@ -1,0 +1,1 @@
+worker: py manage.py qcluster
