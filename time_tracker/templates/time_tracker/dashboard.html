@@ -1,3 +1,4 @@
+{% load render_table from django_tables2 %}
 <!DOCTYPE html>
 <html>
 
@@ -32,93 +33,22 @@
     </div>
 
     <!-- Display active tasks -->
-    <div class="active_tasks">
+    <div class="active-tasks">
         <h2>Active Tasks</h2>
-        <table>
-            <colgroup id="active_task_cols">
-                <col width="15%" style="background-color:#d8d7d7">
-                <col width="15%" style="background-color:white">
-                <col width="15%" style="background-color:#d8d7d7">
-                <col width="15%" style="background-color:white">
-                <col width="15%" style="background-color:#d8d7d7">
-            </colgroup>
-            <tr>
-                <th>Task Name</th>
-                <th>Created</th>
-                <th>Estimated Time</th>
-                <th>Actual Time</th>
-                <th>Mark as Complete</th>
-            </tr>
-            {% for task in active_tasks %}
-                <tr>
-                    <td><a href="{% url 'task_detail' task.id%}">{{ task.task_name }}</a></td>
-                    <td>{{ task.created_date }}</td>
-                    <td>{{ task.expected_mins }}</td>
-                    <td>{{ task.actual_mins|default_if_none:'--' }}</td>
-                    <td>Button</td>
-                </tr>
-            {% endfor %}
-            </table>
+        {% render_table active_task_table %}
     </div>
 
-    <!-- Display inactive tasks -->
-    <div class="inactive_tasks">
-        <h2>Inactive Tasks</h2>
-        <table>
-            <colgroup id="inactive_task_cols">
-                <col width="15%" style="background-color:#d8d7d7">
-                <col width="15%" style="background-color:white">
-                <col width="15%" style="background-color:#d8d7d7">
-                <col width="15%" style="background-color:white">
-                <col width="15%" style="background-color:#d8d7d7">
-            </colgroup>
-            <tr>
-                <th>Task Name</th>
-                <th>Created</th>
-                <th>Estimated Time</th>
-                <th>Actual Time</th>
-                <th>Reactivate</th>
-            </tr>
-            {% for task in inactive_tasks %}
-                <tr>
-                    <td><a href="{% url 'task_detail' task.id%}">{{ task.task_name }}</a></td>
-                    <td>{{ task.created_date }}</td>
-                    <td>{{ task.expected_mins }}</td>
-                    <td>{{ task.actual_mins|default_if_none:'--' }}</td>
-                    <td>Button</td>
-                </tr>
-            {% endfor %}
-            </table>
-    </div>
 
         <!-- Display inactive tasks -->
-    <div class="task_tables">
+    <div class="inactive-tasks">
         <h2>Inactive Tasks</h2>
-        <table>
-            <colgroup id="inactive_task_cols">
-                <col width="15%" style="background-color:#d8d7d7">
-                <col width="15%" style="background-color:white">
-                <col width="15%" style="background-color:#d8d7d7">
-                <col width="15%" style="background-color:white">
-                <col width="15%" style="background-color:#d8d7d7">
-            </colgroup>
-            <tr>
-                <th>Task Name</th>
-                <th>Created</th>
-                <th>Estimated Time</th>
-                <th>Actual Time</th>
-                <th>Reactivate</th>
-            </tr>
-            {% for task in inactive_tasks %}
-                <tr>
-                    <td><a href="{% url 'task_detail' task.id%}">{{ task.task_name }}</a></td>
-                    <td>{{ task.created_date }}</td>
-                    <td>{{ task.expected_mins }}</td>
-                    <td>{{ task.actual_mins|default_if_none:'--' }}</td>
-                    <td>Button</td>
-                </tr>
-            {% endfor %}
-            </table>
+        {% render_table inactive_task_table %}
+        <p>More</p>
+    </div>
+
+    <div class="completed-tasks">
+        <h2>Recently Completed Tasks</h2>
+        <p>Coming Soon...</p>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 </body>

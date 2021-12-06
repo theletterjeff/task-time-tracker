@@ -17,7 +17,7 @@ from django_tables2 import SingleTableView
 
 from .forms import NewTaskForm
 from .models import Task
-from .tables import InactiveTaskTable
+from .tables import ActiveTaskTable, InactiveTaskTable
 
 logger = logging.getLogger(__name__)
 
@@ -49,9 +49,9 @@ def dashboard(request):
     # Assign variables
     context = {
         'new_task_form': new_task_form,
-        'active_tasks': active_tasks, 
-        'inactive_tasks': inactive_tasks,
-        'completed_tasks': completed_tasks,  
+        'active_task_table': ActiveTaskTable(active_tasks),
+        'inactive_task_table': InactiveTaskTable(inactive_tasks),
+        'completed_tasks': completed_tasks,
     }
     return render(request, template, context)
 
