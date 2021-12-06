@@ -59,3 +59,7 @@ def all_tasks(request):
 def task_detail(request, task_id):
     task_str = get_object_or_404(Task, pk=task_id)
     return HttpResponse(f'Detail page for {task_str}.')
+
+def index(request):
+    template = 'time_tracker/index.html'
+    return render(request, template)
