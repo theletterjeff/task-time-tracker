@@ -19,4 +19,5 @@ class NewTaskForm(forms.ModelForm):
             'task_name': styles['short_input'],
             'task_category': styles['short_input'],
             'task_notes': styles['long_input'],
+            'expected_mins': styles['short_input'],
         }

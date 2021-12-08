@@ -3,57 +3,85 @@
 <html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="author" content="Jeff Martin">
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Jeff Martin">
+
+    <title>Time Tracker</title>
+
+    {% load crispy_forms_tags %}
     {% load static %}
+<<<<<<< HEAD
 <<<<<<< HEAD
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 =======
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 >>>>>>> 2f2235f (WIP bootstrap styling)
+=======
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+>>>>>>> 8b027ec (Bootstrap columns)
     <link rel="stylesheet" type="text/css" href="{% static 'time_tracker/style.css' %}">
-    {% load crispy_forms_tags %}
-    <title>Time Tracker</title>
+
 </head>
 
 <body>
-    <!-- Header -->
-    <div class="header">
-        <header>
-            <h1>Time Tracker</h1>
-            <p>Plan out your day and track how well you stuck to your plan.</p>
-        </header>
-    </div>
 
-    <!-- Enter new tasks -->
-    <div class="mb-3">
-        <h2>Enter a task</h2>
-        <form method="post"}>
-            {{ new_task_form | crispy }}
-            {% csrf_token %}
-            <br>
-            <button type="submit">Create Task</button>
-        </form>
-    </div>
+    <div class="container">
 
-    <!-- Display active tasks -->
-    <div class="active-tasks">
-        <h2>Active Tasks</h2>
-        {% render_table active_task_table %}
-    </div>
+        <!-- Header -->
+        <div class="header">
+            <header>
+                <h1>Time Tracker</h1>
+                <p>Plan out your day and track how well you stuck to your plan.</p>
+            </header>
+        </div>
 
+        <!-- New and active tasks -->
+        <div class="row gx-5">
 
-        <!-- Display inactive tasks -->
-    <div class="inactive-tasks">
-        <h2>Inactive Tasks</h2>
-        {% render_table inactive_task_table %}
-        <p>More</p>
-    </div>
+            <!-- Enter new tasks-->
+            <div class="col-4">
+                <h2>Enter a task</h2>
+                <form method="post"}>
+                    {{ new_task_form | crispy }}
+                    {% csrf_token %}
+                    <button type="submit">Create Task</button>
+                </form>
+            </div>
 
-    <div class="completed-tasks">
-        <h2>Recently Completed Tasks</h2>
-        <p>Coming Soon...</p>
+            <!-- Active task table -->
+            <div class="col">
+                <h2>Active Tasks</h2>
+                {% render_table active_task_table %}
+            </div>
+
+        </div>
+
+        <br><br>
+
+        <!-- Display task tables -->
+        <div class="row">
+            <div class="col-12">
+                
+                <!-- Inactive tasks -->
+                <h2>Inactive Tasks</h2>
+                {% render_table inactive_task_table %}
+                
+                <!-- Completed tasks -->
+                <h2>Completed Tasks</h2>
+                {% render_table completed_task_table %}
+            
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Copyright 2021 Jeff Martin</p>
+        </div>
+
     </div>
 <<<<<<< HEAD
 =======

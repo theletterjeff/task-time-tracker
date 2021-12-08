@@ -17,7 +17,7 @@ from django_tables2 import SingleTableView
 
 from .forms import NewTaskForm
 from .models import Task
-from .tables import ActiveTaskTable, InactiveTaskTable
+from .tables import ActiveTaskTable, InactiveTaskTable, CompletedTaskTable
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +51,7 @@ def dashboard(request):
         'new_task_form': new_task_form,
         'active_task_table': ActiveTaskTable(active_tasks),
         'inactive_task_table': InactiveTaskTable(inactive_tasks),
-        'completed_tasks': completed_tasks,
+        'completed_task_table': CompletedTaskTable(completed_tasks),
     }
     return render(request, template, context)
 
@@ -83,4 +83,10 @@ def inactive_tasks(request):
         'time_tracker/inactive_tasks.html',
         {'table': table}
     )
+<<<<<<< HEAD
 >>>>>>> 20858b8 (WIP inactive task page)
+=======
+
+def test(request):
+    return render(request, 'time_tracker/test.html')
+>>>>>>> 8b027ec (Bootstrap columns)

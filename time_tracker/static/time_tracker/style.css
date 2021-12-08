@@ -1,3 +1,7 @@
-.dashboard-table {
-    width: 50%;
+.short-input {
+    width: 100%;
+}
+.long-input {
+    /* width: 50%; */
+    height: 4em;
 }
