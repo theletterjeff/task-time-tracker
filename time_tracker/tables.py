@@ -4,24 +4,28 @@ from .models import Task
 
 
 class ActiveTaskTable(tables.Table):
-    task_name = tables.Column(attrs={'td': {'class': 'odd-col'}})
-    task_category = tables.Column(attrs={'td': {'class': 'even-col'}})
-    task_notes = tables.Column(attrs={'td': {'class': 'odd-col'}})
-    expected_mins = tables.Column(attrs={'td': {'class': 'even-col'}})
-    created_date = tables.Column(attrs={'td': {'class': 'odd-col'}})
 
     class Meta:
-        attrs = {'class': 'dashboard-task-table'}
+        model = Task
+        fields = [
+            'task_name',
+            'task_category',
+            'task_notes',
+            'expected_mins',
+            'actual_mins',
+            'created_date',
+        ]
+        attrs = {
+            'class': 'table table-striped table-hover table-sm',
+            # 'style': 'width: 70%',
+            # 'thead': {'class': 'thead-light'},
+        }
 
 class InactiveTaskTable(tables.Table):
-    task_name = tables.Column(attrs={'td': {'class': 'odd-col'}})
-    task_category = tables.Column(attrs={'td': {'class': 'even-col'}})
-    task_notes = tables.Column(attrs={'td': {'class': 'odd-col'}})
-    expected_mins = tables.Column(attrs={'td': {'class': 'even-col'}})
-    created_date = tables.Column(attrs={'td': {'class': 'odd-col'}})
 
     class Meta:
-        attrs = {'class': 'dashboard-task-table'}
+        model = Task
+        attrs = {'class': 'table table-striped'}
 
 class CompletedTaskTable(tables.Table):
     class Meta:
