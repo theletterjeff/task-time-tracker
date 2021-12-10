@@ -1,23 +1,28 @@
-import django_tables2 as tables
+from django_tables2 import Table, TemplateColumn
+
 from .models import Task
 
 dashboard_table_class = 'table table-striped table-hover table-sm'
 
-class ActiveTaskTable(tables.Table):
+class ActiveTaskTable(Table):
 
     class Meta:
         model = Task
         fields = [
             'task_name',
             'expected_mins',
-            'actual_mins',
-            'completed',
+            'enter_actual_mins',
+            'mark_as_completed',
         ]
         attrs = {
             'class': dashboard_table_class,
         }
+    
+    enter_actual_mins = TemplateColumn(template_name='time_tracker/components/tables/enter_actual_mins.html')
+    mark_as_completed = TemplateColumn(template_name='time_tracker/components/tables/mark_as_completed.html')
 
-class InactiveTaskTable(tables.Table):
+
+class InactiveTaskTable(Table):
 
     class Meta:
         model = Task
@@ -30,7 +35,7 @@ class InactiveTaskTable(tables.Table):
         ]
         attrs = {'class': dashboard_table_class}
 
-class CompletedTaskTable(tables.Table):
+class CompletedTaskTable(Table):
     class Meta:
         model = Task
         fields = [
