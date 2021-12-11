@@ -18,6 +18,7 @@ from django_tables2 import SingleTableView
 from .forms import NewTaskForm
 from .models import Task
 from .tables import ActiveTaskTable, InactiveTaskTable, CompletedTaskTable
+from .utils import post_form_data, view_form
 
 logger = logging.getLogger(__name__)
 
@@ -35,16 +36,8 @@ def dashboard(request):
     completed_tasks = Task.objects.filter(completed=True)
 
     # New task form
-    if request.method == 'POST':
-        new_task_form = NewTaskForm(data=request.POST)
-
-        if new_task_form.is_valid():
-            new_task_form.save()
-            reload_url = reverse('dashboard')
-            return redirect(reload_url)
-
-    else:
-        new_task_form = NewTaskForm()
+    new_task_form = view_form(NewTaskForm, request)
+    post_form_data(new_task_form)
 
     # Assign variables
     context = {
