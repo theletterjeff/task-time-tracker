@@ -1,8 +1,3 @@
-'''
-logger
-active tasks
-other tasks (leading to all tasks page)
-'''
 from datetime import datetime
 import logging
 import pdb
@@ -57,11 +52,10 @@ def task_detail(request, task_id):
     task_str = get_object_or_404(Task, pk=task_id)
     return HttpResponse(f'Detail page for {task_str}.')
 
-<<<<<<< HEAD
 def index(request):
     template = 'time_tracker/index.html'
     return render(request, template)
-=======
+
 class InactiveTaskListView(SingleTableView):
     model = Task
     table_class = InactiveTaskTable
@@ -76,10 +70,6 @@ def inactive_tasks(request):
         'time_tracker/inactive_tasks.html',
         {'table': table}
     )
-<<<<<<< HEAD
->>>>>>> 20858b8 (WIP inactive task page)
-=======
 
 def test(request):
     return render(request, 'time_tracker/test.html')
->>>>>>> 8b027ec (Bootstrap columns)
