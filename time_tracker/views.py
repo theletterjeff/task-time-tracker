@@ -25,8 +25,13 @@ def dashboard(request):
     # Template path
     template = 'time_tracker/dashboard.html'
 
-    # Read in task data (active, inactive, completed)
+    # Read in task data, format table
     active_tasks = Task.objects.filter(active=True, completed=False)
+    active_task_table = ActiveTaskTable(active_tasks)
+    active_task_table.paginate(
+        page=request.GET.get('page', 1),
+        per_page=7,
+    )
 
     # New task form
     new_task_form = view_form(NewTaskForm, request)
@@ -35,7 +40,7 @@ def dashboard(request):
     # Assign variables
     context = {
         'new_task_form': new_task_form,
-        'active_task_table': ActiveTaskTable(active_tasks),
+        'active_task_table': active_task_table,
     }
     return render(request, template, context)
 
