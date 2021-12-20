@@ -4,7 +4,7 @@ from django.db import models
 
 class Task(models.Model):
     # Text values
-    task_name = models.TextField()
+    task_name = models.CharField(max_length=60)
     task_category = models.TextField(blank=True)
     task_notes = models.TextField(blank=True)
 
