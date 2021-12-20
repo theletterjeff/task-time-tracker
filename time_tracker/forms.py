@@ -21,3 +21,13 @@ class NewTaskForm(forms.ModelForm):
             'task_notes': styles['long_input'],
             'expected_mins': styles['short_input'],
         }
+
+class UpdateActiveForm(forms.ModelForm):
+    """Integrate into active task table to enter actual minutes,
+    mark as completed, and delete."""
+    class Meta:
+        model = Task
+        fields = (
+            'actual_mins',
+            'completed',
+        )
