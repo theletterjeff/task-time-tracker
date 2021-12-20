@@ -27,8 +27,6 @@ def dashboard(request):
 
     # Read in task data (active, inactive, completed)
     active_tasks = Task.objects.filter(active=True, completed=False)
-    inactive_tasks = Task.objects.filter(active=False, completed=False)
-    completed_tasks = Task.objects.filter(completed=True)
 
     # New task form
     new_task_form = view_form(NewTaskForm, request)
@@ -38,8 +36,6 @@ def dashboard(request):
     context = {
         'new_task_form': new_task_form,
         'active_task_table': ActiveTaskTable(active_tasks),
-        'inactive_task_table': InactiveTaskTable(inactive_tasks),
-        'completed_task_table': CompletedTaskTable(completed_tasks),
     }
     return render(request, template, context)
 
