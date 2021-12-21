@@ -3,41 +3,59 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-    <div class="container">
+    <div class="container-fluid">
+        <div class="row order-1">
 
-        <!-- Header -->
-        <div class="header">
-            <header>
-                <h1>Time Tracker</h1>
-                <p>Plan out your day and track how well you stuck to your plan.</p>
-            </header>
-        </div>
-
-        <!-- New and active tasks -->
-        <div class="row gx-5">
-
-            <!-- Enter new tasks-->
-            <div class="col-4">
-                <h2>Enter a task</h2>
-                <form method="post"}>
-                    {{ new_task_form | crispy }}
-                    {% csrf_token %}
-                    <button type="submit">Create Task</button>
-                </form>
+            <!-- Sidebar -->
+            <div class="navbar-nav sidebar" id="sticky-sidebar">
+                <div>
+                    <ul>
+                        <p class="sidebar-brand">Time Tracker</p>
+                        <li>Afdjskalfdjsk</li>
+                        <li>B</li>
+                    </ul>
+                </div>
             </div>
 
-            <!-- Active task table -->
-            <div class="col">
-                <h2>Active Tasks</h2>
-                {% render_table active_task_table %}
-            </div>
+            <!-- Main Area-->
+            <div class="col order-2" id="main">
+                <!-- Header -->
+                <div class="header">
+                    <header>
+                        <h1>Time Tracker</h1>
+                        <p>Plan out your day and track how well you stuck to your plan.</p>
+                    </header>
+                </div>
 
+                <!-- New and active tasks -->
+                <div class="row gx-5">
+
+                    <!-- Enter new tasks-->
+                    <div class="col-4">
+                        <h2>Enter a task</h2>
+                        <form method="post"}>
+                            {{ new_task_form | crispy }}
+                            {% csrf_token %}
+                            <button type="submit">Create Task</button>
+                        </form>
+                    </div>
+
+                    <!-- Active task table -->
+                    <div class="col">
+                        <h2>Active Tasks</h2>
+                        {% render_table active_task_table %}
+                    </div>
+
+                </div>
+
+                <br><br>
         </div>
 
-        <br><br>
-
-        <div class="footer">
-            <p>Copyright 2021 Jeff Martin</p>
+        <!--- Footer -->
+        <div class="row py-2 order-2">
+            <div class="footer">
+                <p>Copyright 2021 Jeff Martin</p>
+            </div>
         </div>
 
     </div>

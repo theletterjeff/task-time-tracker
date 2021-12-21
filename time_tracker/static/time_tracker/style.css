@@ -5,3 +5,30 @@
     /* width: 50%; */
     height: 4em;
 }
+#sticky-sidebar {
+    background-color: green;
+}
+.sidebar {
+    width: 13rem;
+}
+.footer {
+    background-color: gray;
+}
+.navbar-nav {
+    display: flex;
+    flex-direction: column;
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+}
+.sidebar .sidebar-brand {
+    height: 5rem;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: 400;
+    padding: 1.5rem 1rem;
+    text-align: left;
+    letter-spacing: 1rem;
+    z-index: 1;
+  }
+  
