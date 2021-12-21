@@ -6,7 +6,9 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
+from django.views import View
 from django.views.generic import ListView, DeleteView
+from django.views.generic.edit import UpdateView
 
 from django_tables2 import SingleTableView
 
@@ -30,7 +32,7 @@ def dashboard(request):
     active_task_table = ActiveTaskTable(active_tasks)
     active_task_table.paginate(
         page=request.GET.get('page', 1),
-        per_page=5,
+        per_page=6,
     )
 
     # New task form
@@ -74,6 +76,25 @@ def inactive_tasks(request):
 
 def test(request):
     return render(request, 'time_tracker/test.html')
+
+class EditTaskView(UpdateView):
+    model = Task
+    fields = (
+        'task_name',
+        'task_category',
+        'task_notes',
+        'expected_mins',
+        'actual_mins',
+        'completed',
+        'active',
+    )
+    template_name = 'time_tracker/edit_task.html'
+    context_object_name = 'task'
+
+    def form_valid(self, form):
+        task = form.save(commit=False)
+        task.save()
+        return redirect('dashboard')
 
 class DeleteTaskView(DeleteView):
     model = Task
