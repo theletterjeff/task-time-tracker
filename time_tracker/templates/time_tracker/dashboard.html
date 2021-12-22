@@ -1,6 +1,8 @@
 {% extends 'time_tracker/base_layout.html' %}
+
 {% load render_table from django_tables2 %}
 {% load crispy_forms_tags %}
+{% load static %}
 
 {% block content %}
 
@@ -8,59 +10,109 @@
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <div class="navbar-nav sidebar">
 
-            <!-- Sidebar -->
-            <div class="navbar-nav sidebar" id="sticky-sidebar">
-                <div>
-                    <ul>
-                        <p class="sidebar-brand">Time Tracker</p>
-                        <li>Afdjskalfdjsk</li>
-                        <li>B</li>
-                    </ul>
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'dashboard' %}">
+                <div class="sidebar-brand-icon">
+                    <i class="fas fa-stopwatch"></i>
                 </div>
-            </div>
+                <div class="sidebar-brand-text mx-3">Time Tracker</div>
+            </a>
 
-            <!-- Main Area-->
-            <div class="col order-2" id="main">
-                <!-- Header -->
-                <div class="header">
-                    <header>
-                        <h1>Time Tracker</h1>
-                        <p>Plan out your day and track how well you stuck to your plan.</p>
-                    </header>
-                </div>
+            {% comment %} <!-- Divider -->
+            <hr class="sidebar-divider my-0"> {% endcomment %}
 
+            <!-- Nav Item - Dashboard -->
+            <li class="nav-item active">
+                <a class="nav-link" href="{% url 'dashboard' %}">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Dashboard</span></a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - All Tasks -->
+            <li class="nav-item active">
+                <a class="nav-link" href="{% url 'all_tasks' %}">
+                    <i class="fas fa-fw fa-tag"></i>
+                    <span>All Tasks</span></a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Inactive Tasks -->
+            <li class="nav-item active">
+                <a class="nav-link" href="{% url 'inactive_tasks' %}">
+                    <i class="fas fa-fw fa-hotel"></i>
+                    <span>Inactive Tasks</span></a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+        </ul>
+        <!-- End of Sidebar -->
+
+        <!-- Main Area-->
+        <div id="content-wrapper" class="d-flex flex-column">
+            
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <!-- Topbar Navbar -->
+                    <h1 class="navbar-nav" id="page-title">Dashboard</h1>
+                </nav>
+                
                 <!-- New and active tasks -->
-                <div class="row gx-5">
+                <div class="container-fluid">
 
-                    <!-- Enter new tasks-->
-                    <div class="col-4">
-                        <h2>Enter a task</h2>
-                        <form method="post"}>
-                            {{ new_task_form | crispy }}
-                            {% csrf_token %}
-                            <button type="submit">Create Task</button>
-                        </form>
-                    </div>
+                    <!-- New task -->
+                    <div class="row">
+                        <div class="col-xl-5 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-lg font-weight-bold text-primary text-uppercase mb-1 card-title">NEW TASK</div>
+                                        </div>
+                                        <div>
+                                            <form method="post"}>
+                                                {{ new_task_form | crispy }}
+                                                {% csrf_token %}
+                                                <button type="submit">Create Task</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                    <!-- Active task table -->
-                    <div class="col">
-                        <h2>Active Tasks</h2>
-                        {% render_table active_task_table %}
+                        <!-- Active task table -->
+
+                        <div class="col-xl-5 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-lg font-weight-bold text-primary text-uppercase mb-1 card-title">TODAY'S TASKS</div>
+                                        </div>
+                                        <div>
+                                            {% render_table active_task_table %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
+            </div>
 
-                <br><br>
-        </div>
-
-        <!--- Footer -->
-        <div class="row py-2 order-2">
-            <div class="footer">
-                <p>Copyright 2021 Jeff Martin</p>
             </div>
         </div>
-
     </div>
 {% endblock %}
