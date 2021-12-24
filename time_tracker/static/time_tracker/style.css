@@ -1,3 +1,17 @@
+/* Form fields */
+.short-input {
+    width: 100%;
+}
+.long-input {
+    height: 4em;
+}
+
+/* Footer */
+.footer {
+    background-color: gray;
+}
+
+/* Sidebar, navbar */
 .sidebar-brand-text {
     color: white;
     text-align: left;
@@ -18,9 +32,13 @@
     padding-left: 2rem;
     padding-right: 2rem;
 }
+
+/* Misc. template elements */
 #page-title {
     font-size: 1.5rem;
 }
+
+/* Cards */
 .border-left-primary {
     border-left: 0.25rem solid rgb(206, 102, 18) !important;
 }
@@ -32,16 +50,17 @@
     color: #212529 !important;
 }
 
-
-.short-input {
-    width: 100%;
-}
-.long-input {
-    height: 4em;
-}
-.footer {
-    background-color: gray;
-}
+/* Buttons */
 .btn-primary {
-    background-color: gray;
+    border: transparent;
+    background-color: rgb(167, 167, 167)
+}
+
+/* Pagination buttons */
+ul.pagination li.page-item a.page-link {
+    color: rgb(206, 102, 18);
+}
+ul.pagination li.active a.page-link {
+    color: white;
+    background-color: rgb(206, 102, 18);
 }
