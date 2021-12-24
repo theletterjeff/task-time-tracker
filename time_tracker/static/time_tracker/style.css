@@ -36,6 +36,7 @@
 /* Misc. template elements */
 #page-title {
     font-size: 1.5rem;
+    font-weight: bold;
 }
 
 /* Cards */
@@ -50,10 +51,36 @@
     color: #212529 !important;
 }
 
+/* Summary stats */
+.no-right-padding {
+    padding-right: 0rem;
+}
+.sum-stat-title {
+    padding-bottom: 0.5rem;
+    font-weight: bold;
+}
+.sum-stat-num {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: rgb(119, 55, 128);
+}
+.sum-stat-col {
+    flex: 0 0 21%;
+    max-width: 21%;
+}
+.sum-stat-vl {
+    flex: 0, 0, 1%;
+    max-width: 1%;
+    border-left: 1px solid green;
+    height: 75.2px;
+    margin-right: 3.2%;
+}
+
 /* Buttons */
 .btn-primary {
-    border: transparent;
-    background-color: rgb(167, 167, 167)
+    border-color: #dddfeb;
+    background-color: white;
+    color: rgb(206, 102, 18)
 }
 
 /* Pagination buttons */
