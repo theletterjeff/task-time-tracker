@@ -21,14 +21,15 @@
 #page-title {
     font-size: 1.5rem;
 }
-.text-primary {
-    color: rgb(100, 22, 124) !important;
-}
 .border-left-primary {
-    border-left: 0.25rem solid rgb(100, 22, 124) !important;
+    border-left: 0.25rem solid rgb(206, 102, 18) !important;
 }
 .card-title {
     padding-bottom: 1rem;
+    color: rgb(206, 102, 18) !important;
+}
+.table {
+    color: #212529 !important;
 }
 
 
@@ -39,5 +40,8 @@
     height: 4em;
 }
 .footer {
+    background-color: gray;
+}
+.btn-primary {
     background-color: gray;
 }
