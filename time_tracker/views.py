@@ -39,6 +39,9 @@ def dashboard(request):
     new_task_form = view_form(NewTaskForm, request)
     post_form_data(new_task_form)
 
+    # Summary stats
+    estimated_times = active_tasks
+
     # Assign variables
     context = {
         'new_task_form': new_task_form,
