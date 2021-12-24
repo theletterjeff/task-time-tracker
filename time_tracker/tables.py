@@ -11,12 +11,12 @@ class ActiveTaskTable(Table):
         fields = [
             'task_name',
             'expected_mins',
-            'edit',
+            'actual_mins',
+            'completed',
         ]
         attrs = {'class': dashboard_table_class}
     
     edit = TemplateColumn(template_name='time_tracker/components/edit_button.html')
-    delete = TemplateColumn(template_name='time_tracker/components/delete_button.html')
 
 class InactiveTaskTable(Table):
 
