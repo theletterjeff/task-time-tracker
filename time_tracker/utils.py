@@ -21,16 +21,16 @@ def post_form_data(form, url_name='dashboard'):
 
 ### Functions for summary time stats ###
 
-def _td_format(td_object: timedelta) -> str:
+def td_format(td_object: timedelta) -> str:
     """Take a timedelta object and return it formatted as a string"""
     seconds = int(td_object.total_seconds())
     periods = {
-        'year': 60*60*24*365,
-        'month': 60*60*24*30,
+        'yr': 60*60*24*365,
+        'mth': 60*60*24*30,
         'day': 60*60*24,
-        'hour': 60*60,
-        'minute': 60,
-        'second': 1,
+        'hr': 60*60,
+        'min': 60,
+        'sec': 1,
     }
 
     strings=[]
@@ -43,12 +43,6 @@ def _td_format(td_object: timedelta) -> str:
                 strings.append(f'{period_value} {period_name}s')
 
     return " ".join(strings)
-
-def _sum_format_times(times_list: list) -> str:
-    """Take list of estimated times in minutes,
-    return string of total estimated time in hrs/mins format"""
-    total_time = np.sum(times_list)
-    return _td_format(total_time)
 
 def calc_estimated_time(estimated_times: list) -> str:
     pass
