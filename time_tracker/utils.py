@@ -51,3 +51,4 @@ def _sum_format_times(times_list: list) -> str:
     return _td_format(total_time)
 
 def calc_estimated_time(estimated_times: list) -> str:
+    pass
