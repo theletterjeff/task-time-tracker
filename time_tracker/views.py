@@ -2,6 +2,7 @@ from datetime import datetime
 import logging
 import pdb
 
+from django.db.models import Sum
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.shortcuts import get_object_or_404, redirect, render
@@ -40,12 +41,15 @@ def dashboard(request):
     post_form_data(new_task_form)
 
     # Summary stats
-    estimated_times = active_tasks
+    estimated_time = active_tasks.aggregate(Sum('expected_mins'))['expected_mins__sum']
+    actual_time = active_tasks.aggregate(Sum('actual_mins'))['actual_mins__sum']
 
     # Assign variables
     context = {
         'new_task_form': new_task_form,
         'active_task_table': active_task_table,
+        'estimated_time': estimated_time,
+        'actual_time': actual_time,
     }
     return render(request, template, context)
 
