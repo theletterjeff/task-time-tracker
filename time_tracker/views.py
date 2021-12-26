@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
 import pdb
 
@@ -16,7 +16,7 @@ from django_tables2 import SingleTableView
 from .forms import NewTaskForm
 from .models import Task
 from .tables import ActiveTaskTable, InactiveTaskTable, CompletedTaskTable
-from .utils import post_form_data, view_form
+from .utils import post_form_data, view_form, td_format
 
 logger = logging.getLogger(__name__)
 
@@ -42,14 +42,19 @@ def dashboard(request):
 
     # Summary stats
     estimated_time = active_tasks.aggregate(Sum('expected_mins'))['expected_mins__sum']
+    estimated_time_formatted = td_format(timedelta(minutes=estimated_time))
+
+    
+
     actual_time = active_tasks.aggregate(Sum('actual_mins'))['actual_mins__sum']
+    actual_time_formatted = td_format(timedelta(minutes=actual_time))
 
     # Assign variables
     context = {
         'new_task_form': new_task_form,
         'active_task_table': active_task_table,
-        'estimated_time': estimated_time,
-        'actual_time': actual_time,
+        'estimated_time': estimated_time_formatted,
+        'actual_time': actual_time_formatted,
     }
     return render(request, template, context)
 
