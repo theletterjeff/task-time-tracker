@@ -13,7 +13,7 @@ from django.views.generic.edit import UpdateView
 
 from django_tables2 import SingleTableView
 
-from .forms import NewTaskForm
+from .forms import NewTaskForm, UpdateTaskForm
 from .models import Task
 from .tables import ActiveTaskTable, InactiveTaskTable, CompletedTaskTable
 from .utils.form_helpers import post_form_data, view_form
@@ -91,15 +91,7 @@ def inactive_tasks(request):
 
 class EditTaskView(UpdateView):
     model = Task
-    fields = (
-        'task_name',
-        'task_category',
-        'task_notes',
-        'expected_mins',
-        'actual_mins',
-        'completed',
-        'active',
-    )
+    form_class = UpdateTaskForm
     template_name = 'time_tracker/edit_task.html'
     context_object_name = 'task'
 

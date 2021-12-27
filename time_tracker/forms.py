@@ -21,3 +21,21 @@ class NewTaskForm(forms.ModelForm):
             'task_notes': styles['long_input'],
             'expected_mins': styles['short_input'],
         }
+
+class UpdateTaskForm(forms.ModelForm):
+    class Meta:
+        model = Task
+        fields = (
+            'task_name',
+            'task_category',
+            'task_notes',
+            'expected_mins',
+            'actual_mins',
+            'completed',
+            'active',
+        )
+        widgets = {
+            'task_name': styles['short_input'],
+            'task_category': styles['short_input'],
+            'task_notes': styles['long_input'],
+        }
