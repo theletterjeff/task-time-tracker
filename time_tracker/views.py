@@ -16,7 +16,7 @@ from django_tables2 import SingleTableView
 from .forms import NewTaskForm
 from .models import Task
 from .tables import ActiveTaskTable, InactiveTaskTable, CompletedTaskTable
-from .utils import post_form_data, view_form, td_format
+from .utils.form_helpers import post_form_data, view_form
 
 logger = logging.getLogger(__name__)
 
