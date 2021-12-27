@@ -1,12 +1,18 @@
 from datetime import timedelta
+import pdb
 
 from django.db.models import Sum
 
-import numpy as np
+def _convert_minutes_to_td(minutes) -> timedelta:
+    """Take an integer or float of minutes, turn it into a timedelta object"""
+    return timedelta(minutes=minutes)
 
-def format_time(td_object: timedelta) -> str:
+def format_time(minutes: timedelta) -> str:
     """Take a timedelta object and return it formatted as a string"""
-    seconds = int(td_object.total_seconds())
+    if not isinstance(minutes, timedelta):
+        minutes = _convert_minutes_to_td(minutes)
+
+    seconds = int(minutes.total_seconds())
     periods = {
         'yr': 60*60*24*365,
         'mth': 60*60*24*30,
@@ -43,17 +49,19 @@ class DashboardSummStats(object):
     
     @property
     def estimated_no_actual_time(self):
-        records_no_actual = self.task_queryset.filter(actual_mins=np.nan)
+        records_no_actual = self.task_queryset.filter(actual_mins=None)
+        # pdb.set_trace()
         return records_no_actual.aggregate(Sum('expected_mins'))['expected_mins__sum']
     
     @property
     def estimated_plus_actual_time(self):
+        # pdb.set_trace()
         return self.actual_time + self.estimated_no_actual_time
     
     @property
     def unfinished_time(self):
         records_unfinished = self.task_queryset.filter(completed=False)
-        records_unfinished_estimated_no_actual = records_unfinished.filter(actual_mins=np.nan)
+        records_unfinished_estimated_no_actual = records_unfinished.filter(actual_mins=None)
         return (
             records_unfinished.aggregate(Sum('actual_mins'))['actual_mins__sum']
             + records_unfinished_estimated_no_actual.aggregate(Sum('expected_mins'))['expected_mins__sum']

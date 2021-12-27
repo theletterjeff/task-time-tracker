@@ -17,6 +17,7 @@ from .forms import NewTaskForm
 from .models import Task
 from .tables import ActiveTaskTable, InactiveTaskTable, CompletedTaskTable
 from .utils.form_helpers import post_form_data, view_form
+from .utils.model_helpers import DashboardSummStats, format_time
 
 logger = logging.getLogger(__name__)
 
@@ -41,20 +42,22 @@ def dashboard(request):
     post_form_data(new_task_form)
 
     # Summary stats
-    estimated_time = active_tasks.aggregate(Sum('expected_mins'))['expected_mins__sum']
-    estimated_time_formatted = td_format(timedelta(minutes=estimated_time))
+    summ_stats = DashboardSummStats(active_tasks)
 
-    
+    estimated_time = format_time(summ_stats.estimated_time)
+    estimated_plus_actual_time = format_time(summ_stats.estimated_plus_actual_time)
+    actual_time = format_time(summ_stats.actual_time)
+    unfinished_time = format_time(summ_stats.unfinished_time)
 
-    actual_time = active_tasks.aggregate(Sum('actual_mins'))['actual_mins__sum']
-    actual_time_formatted = td_format(timedelta(minutes=actual_time))
 
     # Assign variables
     context = {
         'new_task_form': new_task_form,
         'active_task_table': active_task_table,
-        'estimated_time': estimated_time_formatted,
-        'actual_time': actual_time_formatted,
+        'estimated_time': estimated_time,
+        'estimated_plus_actual_time': estimated_plus_actual_time,
+        'actual_time': actual_time,
+        'unfinished_time': unfinished_time,
     }
     return render(request, template, context)
 
