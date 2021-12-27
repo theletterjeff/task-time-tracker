@@ -89,9 +89,6 @@ def inactive_tasks(request):
         {'table': table}
     )
 
-def test(request):
-    return render(request, 'time_tracker/test.html')
-
 class EditTaskView(UpdateView):
     model = Task
     fields = (
