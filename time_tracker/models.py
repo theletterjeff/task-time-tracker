@@ -27,7 +27,7 @@ class Task(models.Model):
         ordering = ['-created_date']
 
     def __str__(self):
-        return f'"{self.task_name}" created on {self.created_date.strftime("%m/%d/%y")}'
+        return f'{self.id} "{self.task_name}" created on {self.created_date.strftime("%m/%d/%y")}'
     
     def edit_task_url(self):
         return reverse('edit_task', kwargs={'pk': self.id})
