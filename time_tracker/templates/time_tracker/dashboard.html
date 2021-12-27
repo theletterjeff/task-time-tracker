@@ -6,158 +6,94 @@
 
 {% block content %}
 
-    <!-- Page Wrapper -->
-    <div id="wrapper">
+    <!-- Top line: new tasks & active tasks -->
+    <div class="row">
 
-        <!-- Sidebar -->
+        <!-- Active task table -->
 
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark">
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'dashboard' %}">
-                <div class="sidebar-brand-icon">
-                    <i class="fas fa-stopwatch"></i>
-                </div>
-                <div class="sidebar-brand-text mx-3">Time Tracker</div>
-            </a>
-
-            <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
-                <a class="nav-link" href="{% url 'dashboard' %}">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Dashboard</span></a>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-            <!-- Nav Item - All Tasks -->
-            <li class="nav-item active">
-                <a class="nav-link" href="{% url 'all_tasks' %}">
-                    <i class="fas fa-fw fa-tag"></i>
-                    <span>All Tasks</span></a>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-            <!-- Nav Item - Inactive Tasks -->
-            <li class="nav-item active">
-                <a class="nav-link" href="{% url 'inactive_tasks' %}">
-                    <i class="fas fa-fw fa-hotel"></i>
-                    <span>Inactive Tasks</span></a>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-        </ul>
-        <!-- End of Sidebar -->
-
-        <!-- Main Area-->
-        <div id="content-wrapper" class="d-flex flex-column">
-            
-            <!-- Main Content -->
-            <div id="content">
-
-                <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-                    <!-- Topbar Navbar -->
-                    <h1 class="navbar-nav" id="page-title">Dashboard</h1>
-                </nav>
-                
-                <!-- New and active tasks -->
-                <div class="container-fluid">
-
-                    <!-- Top line: new tasks & active tasks -->
-                    <div class="row">
-
-                        <!-- Active task table -->
-
-                        <div class="col-xl-8 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-lg font-weight-bold text-primary text-uppercase mb-1 card-title">TODAY'S TASKS</div>
-                                        </div>
-                                        <div>
-                                            {% render_table active_task_table %}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+        <div class="col-xl-8 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-lg font-weight-bold text-primary text-uppercase mb-1 card-title">TODAY'S TASKS</div>
                         </div>
-                        
-                        <!-- Create a new task-->
-                        <div class="col-xl-4 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-lg font-weight-bold text-primary text-uppercase mb-1 card-title">NEW TASK</div>
-                                        </div>
-                                        <div>
-                                            <form method="post"}>
-                                                {{ new_task_form | crispy }}
-                                                {% csrf_token %}
-                                                <button class="btn btn-primary">Create Task</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div>
+                            {% render_table active_task_table %}
                         </div>
-                    
-                    <!-- Second row: summary stats -->
-
-                    <div class="row">
-                        <div class="col-xl-12 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body no-right-padding">
-                                    <div class="row no-gutters align-items-center">
-
-                                        <!-- Summary stats header -->
-                                        <div class="col mr-2">
-                                            <div class="text-lg font-weight-bold text-primary text-uppercase mb-1 card-title">OUTLOOK FOR TODAY</div>
-                                        </div>
-                                        
-                                        <!-- Summary stats details-->
-                                        <div class="row no-right-padding">
-                                            <div class="sum-stat-col sum-stat-col-first">
-                                                <div class='sum-stat-title'>Initial Time Estimate</div>
-                                                <div class='sum-stat-num'>{{ estimated_time }}</div>
-                                            </div>
-
-                                            <div class="sum-stat-vl"></div>
-
-                                            <div class="sum-stat-col">
-                                                <div class='sum-stat-title'>Current Time Estimate</div>
-                                                <div class='sum-stat-num'>{{ estimated_plus_actual_time }}</div>
-                                            </div>
-
-                                            <div class="sum-stat-vl"></div>
-
-                                            <div class="sum-stat-col">
-                                                <div class='sum-stat-title'>Time Spent So Far</div>
-                                                <div class='sum-stat-num'>{{ actual_time }}</div>
-                                            </div>
-
-                                            <div class="sum-stat-vl"></div>
-
-                                            <div class="sum-stat-col">
-                                                <div class='sum-stat-title'>Time Remaining</div>
-                                                <div class='sum-stat-num'>{{ unfinished_time }}</div>
-                                            </div>
-                                        
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
+                    </div>
                 </div>
             </div>
-
+        </div>
+        
+        <!-- Create a new task-->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-lg font-weight-bold text-primary text-uppercase mb-1 card-title">NEW TASK</div>
+                        </div>
+                        <div>
+                            <form method="post"}>
+                                {{ new_task_form | crispy }}
+                                {% csrf_token %}
+                                <button class="btn btn-primary">Create Task</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- Second row: summary stats -->
+
+    <div class="row">
+        <div class="col-xl-12 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body no-right-padding">
+                    <div class="row no-gutters align-items-center">
+
+                        <!-- Summary stats header -->
+                        <div class="col mr-2">
+                            <div class="text-lg font-weight-bold text-primary text-uppercase mb-1 card-title">OUTLOOK FOR TODAY</div>
+                        </div>
+                        
+                        <!-- Summary stats details-->
+                        <div class="row no-right-padding">
+                            <div class="sum-stat-col sum-stat-col-first">
+                                <div class='sum-stat-title'>Initial Time Estimate</div>
+                                <div class='sum-stat-num'>{{ estimated_time }}</div>
+                            </div>
+
+                            <div class="sum-stat-vl"></div>
+
+                            <div class="sum-stat-col">
+                                <div class='sum-stat-title'>Current Time Estimate</div>
+                                <div class='sum-stat-num'>{{ estimated_plus_actual_time }}</div>
+                            </div>
+
+                            <div class="sum-stat-vl"></div>
+
+                            <div class="sum-stat-col">
+                                <div class='sum-stat-title'>Time Spent So Far</div>
+                                <div class='sum-stat-num'>{{ actual_time }}</div>
+                            </div>
+
+                            <div class="sum-stat-vl"></div>
+
+                            <div class="sum-stat-col">
+                                <div class='sum-stat-title'>Time Remaining</div>
+                                <div class='sum-stat-num'>{{ unfinished_time }}</div>
+                            </div>
+                                    
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 {% endblock %}
