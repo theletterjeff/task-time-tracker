@@ -111,6 +111,5 @@ class EditTaskView(UpdateView):
 class DeleteTaskView(DeleteView):
     model = Task
     success_url = reverse_lazy('dashboard')
-
-    def get(self, *args, **kwargs):
-        return self.post(*args, **kwargs)
+    template_name = 'edit_task.html'
+    context_object_name = 'task'

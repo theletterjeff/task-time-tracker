@@ -81,6 +81,9 @@
     background-color: white;
     color: rgb(206, 102, 18)
 }
+.btn-margin-bottom {
+    margin-bottom: 1rem;
+}
 
 /* Pagination buttons */
 ul.pagination li.page-item a.page-link {
