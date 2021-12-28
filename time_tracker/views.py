@@ -29,6 +29,9 @@ def dashboard(request):
     # Template path
     template = 'time_tracker/dashboard.html'
 
+    # Set page title
+    page_title = 'Dashboard'
+
     # Read in task data, format table
     active_tasks = Task.objects.filter(active=True)
     active_task_table = ActiveTaskTable(active_tasks)
@@ -52,6 +55,7 @@ def dashboard(request):
 
     # Assign variables
     context = {
+        'page_title': page_title,
         'new_task_form': new_task_form,
         'active_task_table': active_task_table,
         'estimated_time': estimated_time,
@@ -94,6 +98,8 @@ class EditTaskView(UpdateView):
     form_class = UpdateTaskForm
     template_name = 'time_tracker/edit_task.html'
     context_object_name = 'task'
+
+    extra_context = {'page_title': 'Edit Task'}
 
     def form_valid(self, form):
         task = form.save(commit=False)
