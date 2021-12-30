@@ -27,7 +27,7 @@ def dashboard(request):
     and all tasks w/edit."""
 
     # Template path
-    template = 'time_tracker/dashboard.html'
+    template = 'task_time_tracker/dashboard.html'
 
     # Set page title
     page_title = 'Dashboard'
@@ -75,13 +75,13 @@ def task_detail(request, task_id):
     return HttpResponse(f'Detail page for {task_str}.')
 
 def index(request):
-    template = 'time_tracker/index.html'
+    template = 'task_time_tracker/index.html'
     return render(request, template)
 
 class InactiveTaskListView(SingleTableView):
     model = Task
     table_class = InactiveTaskTable
-    template_name = 'time_tracker/inactive_tasks.html'
+    template_name = 'task_time_tracker/inactive_tasks.html'
 
 def inactive_tasks(request):
     table = InactiveTaskTable(
@@ -89,14 +89,14 @@ def inactive_tasks(request):
     )
     return render(
         request,
-        'time_tracker/inactive_tasks.html',
+        'task_time_tracker/inactive_tasks.html',
         {'table': table}
     )
 
 class EditTaskView(UpdateView):
     model = Task
     form_class = UpdateTaskForm
-    template_name = 'time_tracker/edit_task.html'
+    template_name = 'task_time_tracker/edit_task.html'
     context_object_name = 'task'
 
     extra_context = {'page_title': 'Edit Task'}

@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('time_tracker', '0004_alter_task_completed_date'),
+        ('task_time_tracker', '0004_alter_task_completed_date'),
     ]
 
     operations = [

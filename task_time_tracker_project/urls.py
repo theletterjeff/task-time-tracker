@@ -1,4 +1,4 @@
-"""tlj_website URL Configuration
+"""task_time_tracker URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.2/topics/http/urls/
@@ -19,5 +19,5 @@ from django.urls import include, path
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('main.urls')),
-    path('time_tracker/', include('time_tracker.urls'))
+    path('task_time_tracker/', include('task_time_tracker.urls'))
 ]

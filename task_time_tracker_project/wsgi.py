@@ -1,5 +1,5 @@
 """
-WSGI config for tlj_website project.
+WSGI config for task_time_tracker project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'tlj_website.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'task_time_tracker_project.settings')
 
 application = get_wsgi_application()

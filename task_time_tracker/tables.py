@@ -16,7 +16,7 @@ class ActiveTaskTable(Table):
         ]
         attrs = {'class': dashboard_table_class}
     
-    edit = TemplateColumn(template_name='time_tracker/components/edit_button.html')
+    edit = TemplateColumn(template_name='task_time_tracker/components/edit_button.html')
 
 class InactiveTaskTable(Table):
 

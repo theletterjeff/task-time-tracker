@@ -1,5 +1,5 @@
 """
-ASGI config for tlj_website project.
+ASGI config for task-time-tracker project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'tlj_website.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'task_time_tracker_project.settings')
 
 application = get_asgi_application()
