@@ -3,10 +3,22 @@ import pdb
 
 from django.db.models import Sum
 
-def _convert_minutes_to_td(minutes) -> timedelta:
+import numpy as np
+
+def _get_col_sum(queryset, col_name: str) -> int:
+    """Aggregate a column from a queryset,
+    returning the value as an integer"""
+    value = queryset.aggregate(Sum(col_name))[f'{col_name}__sum']
+    if value is None or value == np.nan:
+        value = 0
+    return int(value)
+
+def _convert_minutes_to_td(minutes: int) -> timedelta:
     """Take an integer or float of minutes, turn it into a timedelta object"""
-    if minutes == None:
+    if minutes == None or minutes == np.nan:
         minutes = 0
+    elif isinstance(minutes, np.int32):
+        minutes = int(minutes)
     return timedelta(minutes=minutes)
 
 def format_time(minutes: timedelta) -> str:
@@ -15,25 +27,29 @@ def format_time(minutes: timedelta) -> str:
         minutes = _convert_minutes_to_td(minutes)
 
     seconds = int(minutes.total_seconds())
-    periods = {
-        'yr': 60*60*24*365,
-        'mth': 60*60*24*30,
-        'day': 60*60*24,
-        'hr': 60*60,
-        'min': 60,
-        'sec': 1,
-    }
 
-    strings=[]
-    for period_name, period_seconds in periods.items():
-        if seconds > period_seconds:
-            period_value, seconds = divmod(seconds, period_seconds)
-            if period_value == 1:
-                strings.append(f'{period_value} {period_name}')
-            else:
-                strings.append(f'{period_value} {period_name}s')
+    if seconds == 0:
+        total_time = '0 mins'
+    
+    else:
+        periods = {
+            'day': 60*60*24,
+            'hr': 60*60,
+            'min': 60,
+        }
 
-    return " ".join(strings)
+        strings=[]
+        for period_name, period_seconds in periods.items():
+            if seconds >= period_seconds:
+                period_value, seconds = divmod(seconds, period_seconds)
+                if period_value == 1:
+                    strings.append(f'{period_value} {period_name}')
+                else:
+                    strings.append(f'{period_value} {period_name}s')
+
+        total_time = " ".join(strings)
+    
+    return total_time
 
 class DashboardSummStats(object):
 
@@ -43,37 +59,27 @@ class DashboardSummStats(object):
 
     @property
     def estimated_time(self):
-        return self.task_queryset.aggregate(Sum('expected_mins'))['expected_mins__sum']
+        return _get_col_sum(self.task_queryset, 'expected_mins')
     
     @property
     def actual_time(self):
-        return self.task_queryset.aggregate(Sum('actual_mins'))['actual_mins__sum']
+        return _get_col_sum(self.task_queryset, 'actual_mins')
     
     @property
     def estimated_no_actual_time(self):
         records_no_actual = self.task_queryset.filter(actual_mins=None)
-        # pdb.set_trace()
-        return records_no_actual.aggregate(Sum('expected_mins'))['expected_mins__sum']
+        return _get_col_sum(records_no_actual, 'expected_mins')
     
     @property
     def estimated_plus_actual_time(self):
-        try:
-            estimated_plus_actual_time = self.actual_time + self.estimated_no_actual_time
-        except TypeError:
-            estimated_plus_actual_time = 0
-        return estimated_plus_actual_time
+        return self.actual_time + self.estimated_no_actual_time
     
     @property
     def unfinished_time(self):
         records_unfinished = self.task_queryset.filter(completed=False)
         records_unfinished_estimated_no_actual = records_unfinished.filter(actual_mins=None)
 
-        try:
-            unfinished_time = (
-                records_unfinished.aggregate(Sum('actual_mins'))['actual_mins__sum']
-                + records_unfinished_estimated_no_actual.aggregate(Sum('expected_mins'))['expected_mins__sum']
-            )
-        except TypeError:
-            unfinished_time = 0
-        return unfinished_time
-        
+        return (
+                _get_col_sum(records_unfinished, 'actual_mins') +
+                _get_col_sum(records_unfinished_estimated_no_actual, 'expected_mins')
+        )
