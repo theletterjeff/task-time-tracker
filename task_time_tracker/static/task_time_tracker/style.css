@@ -2,9 +2,6 @@
 .short-input {
     height: 2rem;
 }
-.long-input {
-    height: 4rem;
-}
 
 /* Footer */
 .footer {
@@ -85,7 +82,16 @@
     margin-bottom: 1rem;
 }
 
-/* Pagination buttons */
+/* Table */
+th.orderable a {
+    color: rgb(119, 55, 128);
+}
+tr.even td {
+    vertical-align: middle;
+}
+tr.odd td {
+    vertical-align: middle;
+}
 ul.pagination li.page-item a.page-link {
     color: rgb(206, 102, 18);
 }

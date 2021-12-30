@@ -3,7 +3,8 @@ from django import forms
 
 styles = {
     'short_input': forms.TextInput(attrs={'class': 'short-input'}),
-    'long_input': forms.TextInput(attrs={'class': 'long-input'}),
+    'long_input': forms.Textarea(attrs={'rows': '2'}),
+    'num_input': forms.NumberInput(attrs={'class': 'short-input'}),
 }
 
 class NewTaskForm(forms.ModelForm):
@@ -19,7 +20,7 @@ class NewTaskForm(forms.ModelForm):
             'task_name': styles['short_input'],
             'task_category': styles['short_input'],
             'task_notes': styles['long_input'],
-            'expected_mins': styles['short_input'],
+            'expected_mins': styles['num_input'],
         }
 
 class UpdateTaskForm(forms.ModelForm):
