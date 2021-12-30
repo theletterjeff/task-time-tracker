@@ -5,6 +5,8 @@ from django.db.models import Sum
 
 def _convert_minutes_to_td(minutes) -> timedelta:
     """Take an integer or float of minutes, turn it into a timedelta object"""
+    if minutes == None:
+        minutes = 0
     return timedelta(minutes=minutes)
 
 def format_time(minutes: timedelta) -> str:
@@ -55,14 +57,23 @@ class DashboardSummStats(object):
     
     @property
     def estimated_plus_actual_time(self):
-        # pdb.set_trace()
-        return self.actual_time + self.estimated_no_actual_time
+        try:
+            estimated_plus_actual_time = self.actual_time + self.estimated_no_actual_time
+        except TypeError:
+            estimated_plus_actual_time = 0
+        return estimated_plus_actual_time
     
     @property
     def unfinished_time(self):
         records_unfinished = self.task_queryset.filter(completed=False)
         records_unfinished_estimated_no_actual = records_unfinished.filter(actual_mins=None)
-        return (
-            records_unfinished.aggregate(Sum('actual_mins'))['actual_mins__sum']
-            + records_unfinished_estimated_no_actual.aggregate(Sum('expected_mins'))['expected_mins__sum']
-        )
+
+        try:
+            unfinished_time = (
+                records_unfinished.aggregate(Sum('actual_mins'))['actual_mins__sum']
+                + records_unfinished_estimated_no_actual.aggregate(Sum('expected_mins'))['expected_mins__sum']
+            )
+        except TypeError:
+            unfinished_time = 0
+        return unfinished_time
+        
