@@ -29,7 +29,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'main.apps.MainConfig',
     'task_time_tracker.apps.TimeTrackerConfig',
     'django.contrib.admin',
     'django.contrib.auth',
