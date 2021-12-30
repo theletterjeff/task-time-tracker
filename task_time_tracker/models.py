@@ -11,7 +11,7 @@ class Task(models.Model):
 
     # Completion durations
     expected_mins = models.IntegerField()
-    actual_mins = models.IntegerField(null=True)
+    actual_mins = models.IntegerField(null=True, blank=True)
 
     # Completed yes/no
     completed = models.BooleanField(default=False)
