@@ -8,8 +8,8 @@ from django.template import loader
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.views.generic import ListView, DeleteView
-from django.views.generic.edit import UpdateView
+from django.views.generic import ListView
+from django.views.generic.edit import DeleteView, UpdateView
 
 from django_tables2 import SingleTableView, RequestConfig
 
