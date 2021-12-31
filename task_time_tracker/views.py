@@ -11,7 +11,7 @@ from django.views import View
 from django.views.generic import ListView, DeleteView
 from django.views.generic.edit import UpdateView
 
-from django_tables2 import SingleTableView
+from django_tables2 import SingleTableView, RequestConfig
 
 from .forms import NewTaskForm, UpdateTaskForm
 from .models import Task
@@ -34,7 +34,7 @@ def dashboard(request):
 
     # Read in task data, format table
     active_tasks = Task.objects.filter(active=True)
-    active_task_table = ActiveTaskTable(active_tasks)
+    active_task_table = ActiveTaskTable(active_tasks, request=request)
     active_task_table.paginate(
         page=request.GET.get('page', 1),
         per_page=6,

@@ -5,7 +5,7 @@ from .models import Task
 dashboard_table_class = 'table table-striped table-hover table-sm'
 
 class ActiveTaskTable(Table):
-
+    """Note: must pass request argument to enable column sorting"""
     class Meta:
         model = Task
         fields = [
