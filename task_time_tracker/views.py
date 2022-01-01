@@ -33,7 +33,7 @@ def dashboard(request):
 
     # Read in task data, format table
     active_tasks = Task.objects.filter(active=True)
-    active_tasks = active_tasks.order_by('completed', 'expected_mins')
+    active_tasks = active_tasks.order_by('completed', '-expected_mins')
     active_task_table = ActiveTaskTable(active_tasks, request=request)
     active_task_table.paginate(
         page=request.GET.get('page', 1),
