@@ -42,8 +42,14 @@ def dashboard(request):
     )
 
     # New task form
-    new_task_form = view_form(NewTaskForm, request)
-    post_form_data(new_task_form)
+    if request.method == 'POST':
+        new_task_form = NewTaskForm(data=request.POST)
+        if new_task_form.is_valid():
+            new_task_form.save()
+            reload_url = reverse('dashboard')
+            return redirect(reload_url)
+    else:
+        new_task_form = NewTaskForm()
 
     # Summary stats
     summ_stats = DashboardSummStats(active_tasks)
