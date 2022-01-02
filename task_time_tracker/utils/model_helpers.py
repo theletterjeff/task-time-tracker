@@ -5,7 +5,7 @@ from django.db.models import Sum
 
 import numpy as np
 
-def _get_col_sum(queryset, col_name: str) -> int:
+def get_col_sum(queryset, col_name: str) -> int:
     """Aggregate a column from a queryset,
     returning the value as an integer"""
     value = queryset.aggregate(Sum(col_name))[f'{col_name}__sum']
@@ -54,25 +54,24 @@ def format_time(minutes: timedelta) -> str:
 class DashboardSummStats(object):
 
     def __init__(self, task_queryset):
-        # Pass in the active tasks queryset
         self.task_queryset = task_queryset
 
     @property
-    def estimated_time(self):
-        return _get_col_sum(self.task_queryset, 'expected_mins')
+    def initial_estimated_time(self):
+        return get_col_sum(self.task_queryset, 'expected_mins')
     
     @property
     def actual_time(self):
-        return _get_col_sum(self.task_queryset, 'actual_mins')
+        return get_col_sum(self.task_queryset, 'actual_mins')
     
     @property
-    def estimated_no_actual_time(self):
+    def _estimated_no_actual_time(self):
         records_no_actual = self.task_queryset.filter(actual_mins=None)
-        return _get_col_sum(records_no_actual, 'expected_mins')
+        return get_col_sum(records_no_actual, 'expected_mins')
     
     @property
-    def estimated_plus_actual_time(self):
-        return self.actual_time + self.estimated_no_actual_time
+    def current_estimated_time(self):
+        return self.actual_time + self._estimated_no_actual_time
     
     @property
     def unfinished_time(self):
@@ -80,6 +79,6 @@ class DashboardSummStats(object):
         records_unfinished_estimated_no_actual = records_unfinished.filter(actual_mins=None)
 
         return (
-                _get_col_sum(records_unfinished, 'actual_mins') +
-                _get_col_sum(records_unfinished_estimated_no_actual, 'expected_mins')
+                get_col_sum(records_unfinished, 'actual_mins') +
+                get_col_sum(records_unfinished_estimated_no_actual, 'expected_mins')
         )

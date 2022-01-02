@@ -53,8 +53,8 @@ def dashboard(request):
     # Summary stats
     summ_stats = DashboardSummStats(active_tasks)
 
-    estimated_time = format_time(summ_stats.estimated_time)
-    estimated_plus_actual_time = format_time(summ_stats.estimated_plus_actual_time)
+    initial_estimated_time = format_time(summ_stats.initial_estimated_time)
+    current_estimated_time = format_time(summ_stats.current_estimated_time)
     actual_time = format_time(summ_stats.actual_time)
     unfinished_time = format_time(summ_stats.unfinished_time)
 
@@ -64,8 +64,8 @@ def dashboard(request):
         'page_title': page_title,
         'new_task_form': new_task_form,
         'active_task_table': active_task_table,
-        'estimated_time': estimated_time,
-        'estimated_plus_actual_time': estimated_plus_actual_time,
+        'initial_estimated_time': initial_estimated_time,
+        'current_estimated_time': current_estimated_time,
         'actual_time': actual_time,
         'unfinished_time': unfinished_time,
     }
