@@ -1,14 +1,105 @@
-from django.test import TestCase
+from django.test import Client, TestCase
+from django.urls import reverse
 
 import pandas as pd
+from lorem import get_word
 
 from .models import Task
 
+def create_task(
+    task_name=get_word(count=2),
+    expected_mins=1,
+    **kwargs
+):
+    return Task.objects.create(
+        task_name=task_name,
+        expected_mins=expected_mins,
+        **kwargs,
+    )
+
 class TaskModelTests(TestCase):
-    
+
     def test_ordered_by_date_descending(self):
-        """Model records are ordered by date descending"""
-        created_dates = pd.Series(list(Task.objects.all().values('created_date')))
-        diff_from_prior_date = created_dates.diff()
-        date_gt_prior_date = diff_from_prior_date > 0
-        self.assertIs(date_gt_prior_date, 1)
+        """
+        A queryset of newly created records is equal to
+        the same queryset ordered by created_date descending
+        """
+        create_task()
+        create_task()
+
+        sorted_queryset_descending = Task.objects.all().order_by('-created_date')
+        sorted_queryset_ascending = Task.objects.all().order_by('created_date')
+
+        self.assertEqual(list(Task.objects.all()), list(sorted_queryset_descending))
+        self.assertNotEqual(list(Task.objects.all()), list(sorted_queryset_ascending))
+    
+    def test_new_tasks_are_active(self):
+        """
+        The active property of newly created tasks is True
+        """
+        task = create_task()
+        self.assertTrue(task.active)
+
+class TaskDashboardViewTests(TestCase):
+
+    def test_page_load(self):
+        """Response status for page load is 200"""
+        response = self.client.get(reverse('dashboard'))
+        self.assertEqual(response.status_code, 200)
+    
+    def test_no_tasks_summ_stats_show_zero(self):
+        """If there are no tasks, tehs ummary stats display as '0 mins'"""
+        response = self.client.get(reverse('dashboard'))
+
+        self.assertEqual(response.context['initial_estimated_time'], '0 mins')
+        self.assertEqual(response.context['current_estimated_time'], '0 mins')
+        self.assertEqual(response.context['actual_time'], '0 mins')
+        self.assertEqual(response.context['unfinished_time'], '0 mins')
+    
+    def test_inactive_task_summ_stats_show_zero(self):
+        """If there are no active tasks, the summary stats display as '0 mins'"""
+        # Create an inactive task
+        create_task(active=False)
+
+        response = self.client.get(reverse('dashboard'))
+
+        self.assertEqual(response.context['initial_estimated_time'], '0 mins')
+        self.assertEqual(response.context['current_estimated_time'], '0 mins')
+        self.assertEqual(response.context['actual_time'], '0 mins')
+        self.assertEqual(response.context['unfinished_time'], '0 mins')
+    
+    def test_active_task_summ_stats_show_expected_mins(self):
+        """
+        If there is one active task with no actual time:
+            - Initial/current estimated time is equal to the task's estimated time
+            - Actual time is equal to '0 mins',
+            - Time remaining is equal to the task's estimated time
+        """
+        create_task()
+        response = self.client.get(reverse('dashboard'))
+
+        self.assertEqual(response.context['initial_estimated_time'], '1 min')
+        self.assertEqual(response.context['current_estimated_time'], '1 min')
+        self.assertEqual(response.context['actual_time'], '0 mins')
+        self.assertEqual(response.context['unfinished_time'], '1 min')
+    
+    def test_current_estimate_uses_expected_mins_if_actual_lt(self):
+        """
+        current_estimated_time is calculated as the sum of expected_mins
+        where actual_mins is less than expected_mins plus actual_mins
+        where actual_mins is greater than expected_mins
+        """
+        create_task(expected_mins=10, actual_mins=None) # 10
+        create_task(expected_mins=10, actual_mins=5) # 10
+        create_task(expected_mins=10, actual_mins=15) # 15
+
+        response = self.client.get(reverse('dashboard'))
+
+        self.assertEqual(response.context['current_estimated_time'], '35 mins')
+    
+    def test_actual_mins_zero_performs_same_as_none(self):
+        """
+        Tasks with actual_mins set to 0 instead of None performs the same
+        as if actual_mins were set to None.
+        """
+        raise Exception('to do')
