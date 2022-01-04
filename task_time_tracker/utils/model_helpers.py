@@ -1,7 +1,7 @@
 from datetime import timedelta
 import pdb
 
-from django.db.models import Sum
+from django.db.models import F, Sum
 
 import numpy as np
 
@@ -71,7 +71,14 @@ class DashboardSummStats(object):
     
     @property
     def current_estimated_time(self):
-        return self.actual_time + self._estimated_no_actual_time
+        estimated_no_actual = self.task_queryset.filter(actual_mins=None)
+        estimated_gt_actual = self.task_queryset.filter(expected_mins__gt=F('actual_mins'))
+        estimated_lt_actual = self.task_queryset.filter(expected_mins__lt=F('actual_mins'))
+        return (
+            get_col_sum(estimated_no_actual, 'expected_mins') +
+            get_col_sum(estimated_gt_actual, 'expected_mins') +
+            get_col_sum(estimated_lt_actual, 'actual_mins')
+        )
     
     @property
     def unfinished_time(self):
