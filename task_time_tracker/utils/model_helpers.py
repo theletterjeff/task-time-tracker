@@ -1,7 +1,7 @@
 from datetime import timedelta
 import pdb
 
-from django.db.models import F, Sum
+from django.db.models import F, Q, Sum
 
 import numpy as np
 
@@ -83,9 +83,18 @@ class DashboardSummStats(object):
     @property
     def unfinished_time(self):
         records_unfinished = self.task_queryset.filter(completed=False)
-        records_unfinished_estimated_no_actual = records_unfinished.filter(actual_mins=None)
+        records_unfinished_wo_actual = records_unfinished.filter(actual_mins=None)
+        records_unfinished_w_actual = records_unfinished.filter(~Q(actual_mins=None))
+
+
+        records_unfinished_w_actual = self.task_queryset.annotate(
+            expected_v_actual = F('expected_mins') - F('actual_mins')
+        )
+        records_time_remaining = records_unfinished_w_actual.filter(
+            expected_v_actual__gt=0).filter(
+                completed=False)
 
         return (
-                get_col_sum(records_unfinished, 'actual_mins') +
-                get_col_sum(records_unfinished_estimated_no_actual, 'expected_mins')
+                get_col_sum(records_unfinished_wo_actual, 'expected_mins') +
+                get_col_sum(records_time_remaining, 'expected_v_actual')
         )

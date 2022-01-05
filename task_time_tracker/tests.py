@@ -103,3 +103,32 @@ class TaskDashboardViewTests(TestCase):
         as if actual_mins were set to None.
         """
         raise Exception('to do')
+    
+    def test_todays_tasks_paginates_after_six_tasks(self):
+        """
+        Having more than 6 active tasks causes table to paginate.
+        Note: there's an advanced way to do this with Selenium.
+        For now, I'm going to simply test to see if the page is
+        still valid when it has 'page=2' in the URL.
+        """
+        for i in range(6):
+            create_task()
+        response = self.client.get(reverse('dashboard'))
+
+        raise Exception('to do')
+    
+    def test_time_spent_plus_remaining_equals_current_estimate(self):
+        """
+        Adding time spent and time remaining equals current time estimate.
+        """
+        create_task(expected_mins=10)
+        create_task(expected_mins=10, actual_mins=5)
+        create_task(expected_mins=10, actual_mins=15)
+
+        response = self.client.get(reverse('dashboard'))
+
+        self.assertEqual(
+            (response.context['summ_stats_obj'].actual_time +
+             response.context['summ_stats_obj'].unfinished_time),
+            35
+        )
