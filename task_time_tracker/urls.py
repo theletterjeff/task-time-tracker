@@ -9,6 +9,6 @@ urlpatterns = [
     path('index/', views.index, name='index'),
     path('inactive_tasks/', views.inactive_tasks, name='inactive_tasks'),
     path('delete-task/<int:pk>/', views.DeleteTaskView.as_view(), name='delete_task'),
-    path('edit-task/<int:pk>/', views.EditTaskView.as_view(), name='edit_task')
-    # path('mark-complete/<int:pk>/', views.MarkCompleteTaskView.as_view(), name='mark_complete_task')
+    path('edit-task/<int:pk>/', views.EditTaskView.as_view(), name='edit_task'),
+    path('todays-tasks/', views.TodaysTaskView.as_view(), name='todays_tasks'),
 ]

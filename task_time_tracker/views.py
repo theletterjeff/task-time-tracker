@@ -118,3 +118,6 @@ class DeleteTaskView(DeleteView):
     success_url = reverse_lazy('dashboard')
     template_name = 'edit_task.html'
     context_object_name = 'task'
+
+class TodaysTaskView(SingleTableView):
+    pass

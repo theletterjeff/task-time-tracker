@@ -5,6 +5,7 @@ from django.test import Client, TestCase
 from django.urls import reverse
 
 from lorem import get_word
+from selenium import webdriver
 
 from .models import Task
 
@@ -139,3 +140,21 @@ class TaskDashboardViewTests(TestCase):
              response.context['summ_stats_obj'].unfinished_time),
             35
         )
+    
+    def test_todays_task_title_links_to_dedicated_page(self):
+        """
+        The card title for the "today's task" widget links to the
+        standalone page for all of today's tasks.
+        """
+        base_url = 'http://127.0.0.1:8000'
+        driver = webdriver.Firefox()
+        driver.get(base_url)
+
+        todays_tasks_widget_title = driver.find_element_by_id('todays-task-widget-title')
+
+        assert todays_tasks_widget_title.tag_name == 'a'
+
+        link_url = todays_tasks_widget_title.get_attribute(name='href')
+        link_url_shortened = link_url.replace(base_url, '')
+
+        assert link_url_shortened == reverse('todays_tasks')
