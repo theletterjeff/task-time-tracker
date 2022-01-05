@@ -6,6 +6,7 @@ from django.urls import reverse
 
 from lorem import get_word
 from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
 
 from .models import Task
 
@@ -145,7 +146,11 @@ class TaskDashboardSeleniumTests(TestCase):
 
     def setUp(self):
         self.base_url = 'http://127.0.0.1:8000'
-        self.driver = webdriver.Firefox()
+
+        options = Options()
+        options.headless = True
+
+        self.driver = webdriver.Firefox(options=options)
         self.driver.get(self.base_url)
 
     def test_todays_task_title_links_to_dedicated_page(self):
