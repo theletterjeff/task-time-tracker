@@ -1,3 +1,6 @@
+import pdb
+
+from django.core.paginator import EmptyPage
 from django.test import Client, TestCase
 from django.urls import reverse
 
@@ -97,13 +100,6 @@ class TaskDashboardViewTests(TestCase):
 
         self.assertEqual(response.context['current_estimated_time'], '35 mins')
     
-    def test_actual_mins_zero_performs_same_as_none(self):
-        """
-        Tasks with actual_mins set to 0 instead of None performs the same
-        as if actual_mins were set to None.
-        """
-        raise Exception('to do')
-    
     def test_todays_tasks_paginates_after_six_tasks(self):
         """
         Having more than 6 active tasks causes table to paginate.
@@ -111,11 +107,23 @@ class TaskDashboardViewTests(TestCase):
         For now, I'm going to simply test to see if the page is
         still valid when it has 'page=2' in the URL.
         """
+        # Create 6 tasks, which should not paginate the table
         for i in range(6):
             create_task()
-        response = self.client.get(reverse('dashboard'))
+        dashboard_url = reverse('dashboard')
+        paginate_url = f'{dashboard_url}?page=2'
 
-        raise Exception('to do')
+        try:
+            response = self.client.get(paginate_url)
+        except EmptyPage:
+            response = 'empty page'
+
+        self.assertEqual(response, 'empty page')
+
+        # Create a 7th task, which should paginate the table
+        create_task()
+        response = self.client.get(paginate_url)
+        self.assertEqual(response.status_code, 200)
     
     def test_time_spent_plus_remaining_equals_current_estimate(self):
         """
