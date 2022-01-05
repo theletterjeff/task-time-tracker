@@ -142,7 +142,7 @@ class TaskDashboardViewTests(TestCase):
             35
         )
 
-class TaskDashboardSeleniumTests(TestCase):
+class SeleniumTestBase(TestCase):
 
     def setUp(self):
         self.base_url = 'http://127.0.0.1:8000'
@@ -152,6 +152,11 @@ class TaskDashboardSeleniumTests(TestCase):
 
         self.driver = webdriver.Firefox(options=options)
         self.driver.get(self.base_url)
+
+    def tearDown(self):
+        self.driver.close()
+
+class TaskDashboardSeleniumTests(SeleniumTestBase):
 
     def test_todays_task_title_links_to_dedicated_page(self):
         """
@@ -167,6 +172,3 @@ class TaskDashboardSeleniumTests(TestCase):
         link_url_shortened = link_url.replace(self.base_url, '')
 
         assert link_url_shortened == reverse('todays_tasks')
-    
-    def tearDown(self):
-        self.driver.close()
