@@ -4,7 +4,6 @@ from django.core.paginator import EmptyPage
 from django.test import Client, TestCase
 from django.urls import reverse
 
-import pandas as pd
 from lorem import get_word
 
 from .models import Task
