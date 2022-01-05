@@ -140,21 +140,28 @@ class TaskDashboardViewTests(TestCase):
              response.context['summ_stats_obj'].unfinished_time),
             35
         )
-    
+
+class TaskDashboardSeleniumTests(TestCase):
+
+    def setUp(self):
+        self.base_url = 'http://127.0.0.1:8000'
+        self.driver = webdriver.Firefox()
+        self.driver.get(self.base_url)
+
     def test_todays_task_title_links_to_dedicated_page(self):
         """
         The card title for the "today's task" widget links to the
         standalone page for all of today's tasks.
         """
-        base_url = 'http://127.0.0.1:8000'
-        driver = webdriver.Firefox()
-        driver.get(base_url)
-
+        driver = self.driver
         todays_tasks_widget_title = driver.find_element_by_id('todays-task-widget-title')
 
         assert todays_tasks_widget_title.tag_name == 'a'
 
         link_url = todays_tasks_widget_title.get_attribute(name='href')
-        link_url_shortened = link_url.replace(base_url, '')
+        link_url_shortened = link_url.replace(self.base_url, '')
 
         assert link_url_shortened == reverse('todays_tasks')
+    
+    def tearDown(self):
+        self.driver.close()
