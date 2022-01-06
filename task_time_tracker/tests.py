@@ -177,3 +177,35 @@ class TaskDashboardSeleniumTests(SeleniumTestBase):
         link_url_shortened = link_url.replace(self.base_url, '')
 
         assert link_url_shortened == reverse('todays_tasks')
+    
+    def test_clicking_on_task_table_column_sorts(self):
+        """
+        xyz
+        """
+        raise Exception('to do')
+
+class TodaysTasksViewTests(TestCase):
+
+    def test_context_filled_w_active_tasks(self):
+        """
+        View contains active tasks and excludes inactive tasks.
+        """
+        create_task(task_name='task_1', active=True, completed=False)
+        create_task(task_name='task_2', active=True, completed=True)
+        create_task(task_name='task_3', active=False, completed=False)
+        create_task(task_name='task_4', active=False, completed=True)
+
+        response = self.client.get(reverse('todays_tasks'))
+        context_queryset = response.context['task_list']
+
+        self.assertEqual(len(context_queryset), 2)
+        
+        task_names = [task.task_name for task in context_queryset]
+
+        # Includes active tasks
+        self.assertTrue('task_1' in task_names)
+        self.assertTrue('task_2' in task_names)
+
+        # Excludes inactive tasks
+        self.assertTrue('task_3' not in task_names)
+        self.assertTrue('task_4' not in task_names)

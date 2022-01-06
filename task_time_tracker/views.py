@@ -15,7 +15,7 @@ from django_tables2 import SingleTableView, RequestConfig
 
 from .forms import NewTaskForm, UpdateTaskForm
 from .models import Task
-from .tables import ActiveTaskTable, InactiveTaskTable, CompletedTaskTable
+from .tables import ActiveTaskTable, AllTaskTable
 from .utils.model_helpers import DashboardSummStats, format_time
 
 logger = logging.getLogger(__name__)
@@ -87,11 +87,11 @@ def index(request):
 
 class InactiveTaskListView(SingleTableView):
     model = Task
-    table_class = InactiveTaskTable
+    table_class = AllTaskTable
     template_name = 'task_time_tracker/inactive_tasks.html'
 
 def inactive_tasks(request):
-    table = InactiveTaskTable(
+    table = AllTaskTable(
         Task.objects.filter(active=False, completed=False)
     )
     return render(
@@ -120,4 +120,10 @@ class DeleteTaskView(DeleteView):
     context_object_name = 'task'
 
 class TodaysTaskView(SingleTableView):
-    pass
+    queryset = Task.objects.filter(active=True)
+    queryset = queryset.order_by('completed')
+
+    template_name = 'task_time_tracker/todays-tasks.html'
+    table_class = AllTaskTable
+
+    extra_context = {'page_title': "Today's Tasks"}

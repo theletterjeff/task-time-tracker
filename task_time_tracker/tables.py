@@ -18,18 +18,14 @@ class ActiveTaskTable(Table):
     
     edit = TemplateColumn(template_name='task_time_tracker/components/edit_button.html')
 
-class InactiveTaskTable(Table):
+class AllTaskTable(Table):
 
     class Meta:
         model = Task
-        fields = [
-            'task_name',
-            'task_category',
-            'task_notes',
-            'expected_mins',
-            'created_date',
-        ]
+        exclude = ['id', 'active', 'created_date', 'completed_date']
         attrs = {'class': dashboard_table_class}
+    
+    edit = TemplateColumn(template_name='task_time_tracker/components/edit_button.html')
 
 class CompletedTaskTable(Table):
     class Meta:
