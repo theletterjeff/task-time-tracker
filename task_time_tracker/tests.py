@@ -1,4 +1,5 @@
 import pdb
+import datetime
 
 from django.core.paginator import EmptyPage
 from django.test import Client, TestCase
@@ -28,8 +29,12 @@ class TaskModelTests(TestCase):
         A queryset of newly created records is equal to
         the same queryset ordered by created_date descending
         """
-        create_task()
-        create_task()
+        # Arguments to pass to created_date
+        now = datetime.datetime.now()
+        tomorrow = now + datetime.timedelta(days=1)
+
+        create_task(now)
+        create_task(tomorrow)
 
         sorted_queryset_descending = Task.objects.all().order_by('-created_date')
         sorted_queryset_ascending = Task.objects.all().order_by('created_date')
