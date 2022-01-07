@@ -1,12 +1,13 @@
 import pdb
 import datetime
 
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.core.paginator import EmptyPage
 from django.test import Client, TestCase
 from django.urls import reverse
 
 from lorem import get_word
-from selenium import webdriver
+from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.firefox.options import Options
 
 from .models import Task
@@ -143,42 +144,71 @@ class TaskDashboardViewTests(TestCase):
             35
         )
 
-class SeleniumTestBase(TestCase):
+class SeleniumTests(StaticLiveServerTestCase):
 
-    def setUp(self):
-        self.base_url = 'http://127.0.0.1:8000'
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
 
         options = Options()
         options.headless = True
 
-        self.driver = webdriver.Firefox(options=options)
-        self.driver.get(self.base_url)
+        cls.driver = WebDriver(options=options)
 
-    def tearDown(self):
-        self.driver.close()
-
-class TaskDashboardSeleniumTests(SeleniumTestBase):
+    @classmethod
+    def tearDownClass(cls):
+        cls.driver.close()
+    
+    ### Dashboard tests ###
 
     def test_todays_task_title_links_to_dedicated_page(self):
         """
         The card title for the "today's task" widget links to the
         standalone page for all of today's tasks.
         """
-        driver = self.driver
-        todays_tasks_widget_title = driver.find_element_by_id('todays-task-widget-title')
+        self.driver.get('%s%s' % (self.live_server_url, '/'))
+        todays_tasks_widget_title = self.driver.find_element_by_id('todays-task-widget-title')
 
-        assert todays_tasks_widget_title.tag_name == 'a'
+        self.assertEqual(todays_tasks_widget_title.tag_name, 'a')
 
         link_url = todays_tasks_widget_title.get_attribute(name='href')
-        link_url_shortened = link_url.replace(self.base_url, '')
 
-        assert link_url_shortened == reverse('todays_tasks')
+        self.assertEqual(
+            link_url,
+            self.live_server_url + reverse('todays_tasks')
+        )
     
     def test_clicking_on_task_table_column_sorts(self):
         """
-        xyz
+        Clicking on "Task name" column sorts data alphabetically.
+        Clicking on it again sorts data reverse alphabetically.
         """
-        raise Exception('to do')
+        create_task(task_name='task_2')
+        create_task(task_name='task_4')
+        create_task(task_name='task_1')
+        create_task(task_name='task_3')
+
+        self.driver.get('%s%s' % (self.live_server_url, '/'))
+        task_name_header = self.driver.find_element_by_link_text('Task name')
+
+        # First click--should appear ascending alphabetical
+        task_name_header.click()
+        task_name_objs = self.driver.find_elements_by_css_selector(
+                '#active-task-table tr td:nth-of-type(1)')
+        task_names = [obj.text for obj in task_name_objs]
+
+        self.assertEqual(task_names, ['task_1', 'task_2', 'task_3', 'task_4'])
+
+        #Second click--should appear descending alphabetical
+        task_name_header = self.driver.find_element_by_link_text('Task name')
+        task_name_header.click()
+
+        task_name_objs = self.driver.find_elements_by_css_selector(
+                '#active-task-table tr td:nth-of-type(1)')
+        task_names = [obj.text for obj in task_name_objs]
+
+        self.assertEqual(task_names, ['task_4', 'task_3', 'task_2', 'task_1'])
+        
 
 class TodaysTasksViewTests(TestCase):
 
