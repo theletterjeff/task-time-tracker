@@ -235,3 +235,15 @@ class TodaysTasksViewTests(TestCase):
         # Excludes inactive tasks
         self.assertTrue('task_3' not in task_names)
         self.assertTrue('task_4' not in task_names)
+    
+    def test_all_tasks_displayed(self):
+        """
+        Table displays all tasks in a single page
+        when less than 25 are created.
+        """
+        for i in range(24):
+            create_task(active=True)
+        
+        response = self.client.get(reverse('todays_tasks'))
+        # pdb.set_trace()
+        raise Exception('to do')
