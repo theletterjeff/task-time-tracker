@@ -14,7 +14,10 @@ class ActiveTaskTable(Table):
             'actual_mins',
             'completed',
         ]
-        attrs = {'class': dashboard_table_class}
+        attrs = {
+            'class': dashboard_table_class,
+            'id': 'active-task-table',
+        }
     
     edit = TemplateColumn(template_name='task_time_tracker/components/edit_button.html')
 
@@ -23,7 +26,10 @@ class AllTaskTable(Table):
     class Meta:
         model = Task
         exclude = ['id', 'active', 'created_date', 'completed_date']
-        attrs = {'class': dashboard_table_class}
+        attrs = {
+            'class': dashboard_table_class,
+            'id': 'big_task_table',
+        }
     
     edit = TemplateColumn(template_name='task_time_tracker/components/edit_button.html')
 
