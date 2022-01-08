@@ -2,6 +2,7 @@ from datetime import datetime
 
 from django.db import models
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 class Task(models.Model):
     # Text values
@@ -22,6 +23,20 @@ class Task(models.Model):
 
     # Status
     active = models.BooleanField(default=True)
+
+    # Priority
+    class Priority(models.IntegerChoices):
+        HIGH = 3, _('High')
+        MEDIUM = 2, _('Medium')
+        LOW = 1, _('Low')
+
+        __empty__ = _('None')
+    
+    priority = models.IntegerField(
+        choices=Priority.choices,
+        blank=True,
+        null=True,
+    )
 
     class Meta:
         ordering = ['-created_date']

@@ -45,6 +45,13 @@ class TaskModelTests(TestCase):
         """
         task = create_task()
         self.assertTrue(task.active)
+    
+    def test_new_task_priority_is_blank(self):
+        """
+        The priority field of a newly created task is None
+        """
+        task = create_task()
+        self.assertEqual(task.priority, None)
 
 class TaskDashboardViewTests(TestCase):
 
