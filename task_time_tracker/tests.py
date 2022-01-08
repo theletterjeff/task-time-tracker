@@ -46,12 +46,37 @@ class TaskModelTests(TestCase):
         task = create_task()
         self.assertTrue(task.active)
     
-    def test_new_task_priority_is_blank(self):
+    def test_new_task_priority_values_evaluate_correctly(self):
         """
-        The priority field of a newly created task is None
+        Creating tasks with priorities set to each of the four
+        options (3, 2, 1, None <- default) return the correct
+        values when calling priority property
         """
-        task = create_task()
-        self.assertEqual(task.priority, None)
+        task_high = create_task(priority=3)
+        task_med = create_task(priority=2)
+        task_low = create_task(priority=1)
+        task_none = create_task()
+
+        self.assertEqual(task_high.priority, 3)
+        self.assertEqual(task_med.priority, 2)
+        self.assertEqual(task_low.priority, 1)
+        self.assertEqual(task_none.priority, None)
+    
+    def test_new_task_priority_labels_evaluate_correctly(self):
+        """
+        Creating tasks with priorities set to each of the four
+        options (3, 2, 1, None <- default) return the correct
+        labels when calling priority property
+        """
+        task_high = create_task(priority=3)
+        task_med = create_task(priority=2)
+        task_low = create_task(priority=1)
+        task_none = create_task()
+
+        self.assertEqual(task_high.get_priority_display(), 'High')
+        self.assertEqual(task_med.get_priority_display(), 'Medium')
+        self.assertEqual(task_low.get_priority_display(), 'Low')
+        self.assertEqual(task_none.get_priority_display(), '--')
 
 class TaskDashboardViewTests(TestCase):
 

@@ -30,7 +30,7 @@ class Task(models.Model):
         MEDIUM = 2, _('Medium')
         LOW = 1, _('Low')
 
-        __empty__ = _('None')
+        __empty__ = _('--')
     
     priority = models.IntegerField(
         choices=Priority.choices,
