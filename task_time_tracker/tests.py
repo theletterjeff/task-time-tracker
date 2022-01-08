@@ -175,6 +175,26 @@ class TaskDashboardViewTests(TestCase):
              response.context['summ_stats_obj'].unfinished_time),
             35
         )
+    
+    def test_create_new_task_form_fields(self):
+        """
+        new_task_form's fields property is equal to
+        ['task_name', 'task_category', 'task_notes',
+        'expected_mins', 'priority]
+        """
+        included_fields = [
+            'task_name',
+            'task_category',
+            'task_notes',
+            'expected_mins',
+            'priority',
+        ]
+        response = self.client.get(reverse('dashboard'))
+
+        form_obj = response.context['new_task_form']
+        form_fields = [field for field in form_obj.fields.keys()]
+        
+        self.assertEqual(form_fields, included_fields)
 
 class SeleniumTests(StaticLiveServerTestCase):
 

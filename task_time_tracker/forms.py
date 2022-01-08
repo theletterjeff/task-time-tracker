@@ -15,6 +15,7 @@ class NewTaskForm(forms.ModelForm):
             'task_category',
             'task_notes',
             'expected_mins',
+            'priority',
         )
         widgets = {
             'task_name': styles['short_input'],
