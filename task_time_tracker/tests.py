@@ -1,5 +1,7 @@
-import pdb
 import datetime
+import pdb
+import pytz
+from unittest import mock
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.core.paginator import EmptyPage
@@ -10,7 +12,7 @@ from lorem import get_word
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.firefox.options import Options
 
-from .models import Task
+from .models import Task, Project
 
 def create_task(
     task_name=get_word(count=2),
@@ -22,6 +24,12 @@ def create_task(
         expected_mins=expected_mins,
         **kwargs,
     )
+
+def create_project(name=get_word(count=2),
+                   **kwargs):
+    return Project.objects.create(name=name,
+                                  **kwargs)
+
 
 class TaskModelTests(TestCase):
 
@@ -77,6 +85,21 @@ class TaskModelTests(TestCase):
         self.assertEqual(task_med.get_priority_display(), 'Medium')
         self.assertEqual(task_low.get_priority_display(), 'Low')
         self.assertEqual(task_none.get_priority_display(), '--')
+
+class ProjectModelTests(TestCase):
+
+    def test_new_project_created_date_now(self):
+        """
+        Default new project created_date is now.
+        """
+        mocked = datetime.datetime(
+            2022, 1, 1, 0, 0, 0,
+            tzinfo=pytz.timezone('America/New_York')
+        )
+        with mock.patch('django.utils.timezone.now',
+                        mock.Mock(return_value=mocked)):
+            project = create_project()
+            self.assertEqual(project.created_date, mocked)
 
 class TaskDashboardViewTests(TestCase):
 
