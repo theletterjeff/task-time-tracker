@@ -5,10 +5,19 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 class Task(models.Model):
+
     # Text values
     task_name = models.CharField(max_length=60)
     task_category = models.TextField(blank=True)
     task_notes = models.TextField(blank=True)
+
+    # Related project
+    project = models.ForeignKey(
+        'Project',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
 
     # Completion durations
     expected_mins = models.IntegerField()

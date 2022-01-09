@@ -85,6 +85,23 @@ class TaskModelTests(TestCase):
         self.assertEqual(task_med.get_priority_display(), 'Medium')
         self.assertEqual(task_low.get_priority_display(), 'Low')
         self.assertEqual(task_none.get_priority_display(), '--')
+    
+    def test_new_task_has_project_attribute(self):
+        """
+        Newly created tasks have an attribute called 'project'
+        """
+        task = create_task()
+        project_attr = getattr(task, 'project', 'no attribute called project')
+        self.assertNotEqual(project_attr, 'no attribute called project')
+    
+    def test_task_project_attr_equals_project_obj(self):
+        """
+        The project attribute of a task equals the project
+        object that was assigned as the attribute
+        """
+        project = create_project()
+        task = create_task(project=project)
+        self.assertEqual(task.project, project)
 
 class ProjectModelTests(TestCase):
 
