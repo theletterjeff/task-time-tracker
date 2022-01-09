@@ -49,3 +49,11 @@ class Task(models.Model):
     
     def get_delete_task_url(self):
         return reverse('delete_task', kwargs={'pk': self.id})
+
+class Project(models.Model):
+
+    name = models.CharField(max_length=60, unique=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+    start_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(blank=True, null=True)
+    completed_date = models.DateTimeField(blank=True, null=True)
