@@ -61,8 +61,14 @@ class Task(models.Model):
 
 class Project(models.Model):
 
+    # Text values
     name = models.CharField(max_length=60, unique=True)
+    description = models.TextField(blank=True)
+
+    # Auto date
     created_date = models.DateTimeField(auto_now_add=True)
+
+    # User-created date
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
     completed_date = models.DateTimeField(blank=True, null=True)

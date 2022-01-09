@@ -117,6 +117,14 @@ class ProjectModelTests(TestCase):
                         mock.Mock(return_value=mocked)):
             project = create_project()
             self.assertEqual(project.created_date, mocked)
+    
+    def test_new_project_description_empty_string(self):
+        """
+        Newly created projects' default description
+        attribute is equal to ''
+        """
+        project = create_project()
+        self.assertEqual(project.description, '')
 
 class TaskDashboardViewTests(TestCase):
 
