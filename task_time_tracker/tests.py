@@ -243,6 +243,68 @@ class TaskDashboardViewTests(TestCase):
         
         self.assertEqual(form_fields, included_fields)
 
+class NewTaskViewTests(TestCase):
+
+    def test_new_task_page_load(self):
+        """
+        Response status for create task page load is 200
+        """
+        response = self.client.get(reverse('new_task'))
+        self.assertEqual(response.status_code, 200)
+    
+    def test_new_task_page_loads_correct_form_fields(self):
+        """
+        Form should include:
+
+        - task_name (display as "Name")
+        - project (display as "Project")
+        - task_category (display as "Categories")
+        - task_notes (display as "Description/Notes")
+        - expected_mins (display as "Expected Time (in Minutes)"
+        - actual_mins (display as "Time Spent So Far (in Minutes)")
+        - completed (display as "Already Complete?")
+        - priority (display as "Priority")
+        """
+        response = self.client.get(reverse('new_task'))
+        field_label_dict = {
+            'task_name': 'Name',
+            'project': 'Project',
+            'priority': 'Priority',
+            'task_category': 'Categories',
+            'task_notes': 'Notes/Description',
+            'expected_mins': 'Expected Time (in Minutes)',
+            'actual_mins': 'Time Spent So Far (in Minutes)',
+        }
+        for field, label in field_label_dict.items():
+            # Fields are correct
+            self.assertIsNotNone(
+                field, response.context['form'].fields.get(field)
+            )
+            # Labels are correct
+            self.assertEqual(
+                label, response.context['form'].fields.get(field).label
+            )
+        
+    def test_new_task_page_loads_fields_in_right_order(self):
+        """
+        New task page form fields are in the order:
+        task_name, project, priority, task_category,
+        task_notes, expected_mins, actual_mins
+        """
+        response = self.client.get(reverse('new_task'))
+        fields = (
+            'task_name',
+            'project',
+            'priority',
+            'task_category',
+            'task_notes',
+            'expected_mins',
+            'actual_mins',
+        )
+        self.assertEqual(
+            tuple(response.context['form'].fields.keys()), fields
+        )
+
 class SeleniumTests(StaticLiveServerTestCase):
 
     @classmethod
