@@ -7,6 +7,29 @@ styles = {
     'num_input': forms.NumberInput(attrs={'class': 'short-input'}),
 }
 
+class NewTaskPageForm(forms.ModelForm):
+    class Meta:
+        model = Task
+        fields = (
+            'task_name',
+            'project',
+            'priority',
+            'task_category',
+            'task_notes',
+            'expected_mins',
+            'actual_mins',
+        )
+        labels = {
+            'task_name': 'Name',
+            'project': 'Project',
+            'priority': 'Priority',
+            'task_category': 'Categories',
+            'task_notes': 'Notes/Description',
+            'expected_mins': 'Expected Time (in Minutes)',
+            'actual_mins': 'Time Spent So Far (in Minutes)',
+        }
+
+
 class NewTaskForm(forms.ModelForm):
     class Meta:
         model = Task

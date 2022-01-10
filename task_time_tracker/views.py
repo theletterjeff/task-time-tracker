@@ -8,11 +8,11 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import ListView
-from django.views.generic.edit import DeleteView, UpdateView
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from django_tables2 import SingleTableView, RequestConfig
 
-from .forms import NewTaskForm, UpdateTaskForm
+from .forms import NewTaskForm, NewTaskPageForm, UpdateTaskForm
 from .models import Task
 from .tables import ActiveTaskTable, AllTaskTable
 from .utils.model_helpers import DashboardSummStats, format_time
@@ -83,6 +83,13 @@ def task_detail(request, task_id):
 def index(request):
     template = 'task_time_tracker/index.html'
     return render(request, template)
+
+class NewTaskView(CreateView):
+    model = Task
+    form_class = NewTaskPageForm
+    template_name = 'task_time_tracker/new-task.html'
+
+    extra_context = {'page_title': 'Create a New Task'}
 
 class InactiveTaskListView(SingleTableView):
     model = Task
