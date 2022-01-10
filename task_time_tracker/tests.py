@@ -369,7 +369,47 @@ class SeleniumTests(StaticLiveServerTestCase):
         task_names = [obj.text for obj in task_name_objs]
 
         self.assertEqual(task_names, ['task_4', 'task_3', 'task_2', 'task_1'])
+    
+    def test_sidebar_links_display_in_right_order(self):
+        """
+        Sidebar items link to:
+        - Dashboard
+        - New Task
+        - New Project
+        - Today's Tasks
+        """
+        self.driver.get('%s%s' % (self.live_server_url, '/'))
+        sidebar_link_elements = self.driver.find_elements_by_class_name('nav-link')
         
+        # Test links
+        sidebar_urls = [element.get_property('href')
+                         for element
+                         in sidebar_link_elements]
+        url_names = [
+            'dashboard',
+            'new_task',
+            'new_project',
+            'todays_tasks',
+        ]
+        intended_urls = [reverse(url_name)
+                         for url_name
+                         in url_names]
+        
+        for actual_url, intended_url in zip(sidebar_urls, intended_urls):
+            self.assertTrue(actual_url.endswith(intended_url))
+        
+        # Test text
+        sidebar_texts = [element.text
+                        for element
+                        in sidebar_link_elements]
+        intended_texts = [
+            'Dashboard',
+            'New Task',
+            'New Project',
+            "Today's Tasks",
+        ]
+        for actual_text, intended_text in zip(sidebar_texts, intended_texts):
+            self.assertEqual(actual_text, intended_text)
 
 class TodaysTasksViewTests(TestCase):
 

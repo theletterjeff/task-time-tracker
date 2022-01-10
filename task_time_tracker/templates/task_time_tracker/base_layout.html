@@ -40,21 +40,31 @@
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
-            <!-- Nav Item - All Tasks -->
+            <!-- Nav Item - New Task -->
             <li class="nav-item active">
-                <a class="nav-link" href="{% url 'all_tasks' %}">
+                <a class="nav-link" href="{% url 'new_task' %}">
                     <i class="fas fa-fw fa-tag"></i>
-                    <span>All Tasks</span></a>
+                    <span>New Task</span></a>
             </li>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
-            <!-- Nav Item - Inactive Tasks -->
+            <!-- Nav Item - New Project -->
             <li class="nav-item active">
-                <a class="nav-link" href="{% url 'inactive_tasks' %}">
+                <a class="nav-link" href="{% url 'new_project' %}">
                     <i class="fas fa-fw fa-hotel"></i>
-                    <span>Inactive Tasks</span></a>
+                    <span>New Project</span></a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Today's Tasks -->
+            <li class="nav-item active">
+                <a class="nav-link" href="{% url 'todays_tasks' %}">
+                    <i class="fas fa-fw fa-hotel"></i>
+                    <span>Today's Tasks</span></a>
             </li>
 
             <!-- Divider -->
