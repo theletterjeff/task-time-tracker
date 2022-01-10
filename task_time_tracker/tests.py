@@ -1,5 +1,6 @@
 import datetime
 import pytz
+from time import sleep
 from unittest import mock
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
@@ -7,9 +8,11 @@ from django.core.paginator import EmptyPage
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from lorem import get_word
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.firefox.options import Options
+
+from lorem import get_word
 
 from .models import Task, Project
 
@@ -410,6 +413,35 @@ class SeleniumTests(StaticLiveServerTestCase):
         ]
         for actual_text, intended_text in zip(sidebar_texts, intended_texts):
             self.assertEqual(actual_text, intended_text)
+    
+    ### New Project Tests ###
+
+    def test_submit_new_project_form_creates_project(self):
+        """
+        Filling and submitting a project form creates a new project
+        """
+        self.driver.get('%s%s' % (self.live_server_url, reverse('new_project')))
+
+        # Fields
+        name_field = self.driver.find_element_by_id('id_name')
+        desc_field = self.driver.find_element_by_id('id_description')
+        start_field = self.driver.find_element_by_id('id_start_date')
+        end_field = self.driver.find_element_by_id('id_end_date')
+
+        # Add inputs
+        name_field.send_keys('test_name')
+        desc_field.send_keys('test_description')
+        start_field.send_keys('1/1/2022')
+        end_field.send_keys('12/31/2022')
+
+        # Submit
+        submit_button = self.driver.find_element_by_class_name('btn')
+        submit_button.send_keys(Keys.RETURN)
+
+        # Check that record was created
+        sleep(1)
+        assert Project.objects.filter(name='test_name')
+    
 
 class TodaysTasksViewTests(TestCase):
 
