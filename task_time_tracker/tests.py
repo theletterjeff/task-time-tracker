@@ -466,6 +466,17 @@ class SeleniumTests(StaticLiveServerTestCase):
         todays_tasks_url = '%s%s' % (self.live_server_url, reverse('todays_tasks'))
         self.assertEqual(self.driver.current_url, todays_tasks_url)
 
+    def test_null_values_in_nullable_project_form_columns_accepted(self):
+        raise Exception('to do')
+    
+    def test_start_date_after_end_date_raises_exc_in_new_project(self):
+        raise Exception('to do')
+    
+    def test_non_date_value_in_date_fields_raises_exc_in_new_project(self):
+        raise Exception('to do')
+    
+    def test_date_string_transformed_to_datetime_in_new_project(self):
+        raise Exception('to do')
 
 class TodaysTasksViewTests(TestCase):
 
