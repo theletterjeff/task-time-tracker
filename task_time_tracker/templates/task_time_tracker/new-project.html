@@ -1,0 +1,13 @@
+{% extends 'task_time_tracker/base_layout.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="col-xl-8">
+        <form method="post" action="">
+            {% csrf_token %}
+            {{ form | crispy }}
+            <button type="submit" class="btn btn-primary btn-success btn-margin-bottom">Save</button>
+        </form>
+    </div>
+{% endblock %}

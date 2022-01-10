@@ -1,4 +1,4 @@
-from .models import Task
+from .models import Project, Task
 from django import forms
 
 styles = {
@@ -29,6 +29,15 @@ class NewTaskPageForm(forms.ModelForm):
             'actual_mins': 'Time Spent So Far (in Minutes)',
         }
 
+class NewProjectForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = (
+            'name',
+            'description',
+            'start_date',
+            'end_date',
+        )
 
 class NewTaskForm(forms.ModelForm):
     class Meta:

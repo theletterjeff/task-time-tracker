@@ -12,8 +12,8 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from django_tables2 import SingleTableView, RequestConfig
 
-from .forms import NewTaskForm, NewTaskPageForm, UpdateTaskForm
-from .models import Task
+from .forms import NewProjectForm, NewTaskForm, NewTaskPageForm, UpdateTaskForm
+from .models import Project, Task
 from .tables import ActiveTaskTable, AllTaskTable
 from .utils.model_helpers import DashboardSummStats, format_time
 
@@ -90,6 +90,13 @@ class NewTaskView(CreateView):
     template_name = 'task_time_tracker/new-task.html'
 
     extra_context = {'page_title': 'Create a New Task'}
+
+class NewProjectView(CreateView):
+    model = Project
+    form_class = NewProjectForm
+    template_name = 'task_time_tracker/new-project.html'
+
+    extra_context = {'page_title': 'Start a New Project'}
 
 class InactiveTaskListView(SingleTableView):
     model = Task
