@@ -506,3 +506,12 @@ class TodaysTasksViewTests(TestCase):
         # Excludes inactive tasks
         self.assertTrue('task_3' not in task_names)
         self.assertTrue('task_4' not in task_names)
+
+class EditTaskViewTests(TestCase):
+
+    def test_correct_list_and_order_edit_task_form_fields(self):
+        """
+        Edit task form should contain the correct fields
+        in the correct order
+        """
+        raise Exception('to do')
