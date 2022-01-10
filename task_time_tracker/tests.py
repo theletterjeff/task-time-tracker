@@ -332,7 +332,7 @@ class SeleniumTests(StaticLiveServerTestCase):
         The card title for the "today's task" widget links to the
         standalone page for all of today's tasks.
         """
-        self.driver.get('%s%s' % (self.live_server_url, '/'))
+        self.driver.get('%s%s' % (self.live_server_url, reverse('dashboard')))
         todays_tasks_widget_title = self.driver.find_element_by_id('todays-task-widget-title')
 
         self.assertEqual(todays_tasks_widget_title.tag_name, 'a')
@@ -354,7 +354,7 @@ class SeleniumTests(StaticLiveServerTestCase):
         create_task(task_name='task_1')
         create_task(task_name='task_3')
 
-        self.driver.get('%s%s' % (self.live_server_url, '/'))
+        self.driver.get('%s%s' % (self.live_server_url, reverse('dashboard')))
         task_name_header = self.driver.find_element_by_link_text('Task name')
 
         # First click--should appear ascending alphabetical
@@ -383,7 +383,7 @@ class SeleniumTests(StaticLiveServerTestCase):
         - New Project
         - Today's Tasks
         """
-        self.driver.get('%s%s' % (self.live_server_url, '/'))
+        self.driver.get('%s%s' % (self.live_server_url, reverse('dashboard')))
         sidebar_link_elements = self.driver.find_elements_by_class_name('nav-link')
         
         # Test links
