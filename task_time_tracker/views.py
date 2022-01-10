@@ -91,12 +91,18 @@ class NewTaskView(CreateView):
 
     extra_context = {'page_title': 'Create a New Task'}
 
+    def get_success_url(self):
+        return reverse('todays_tasks')
+
 class NewProjectView(CreateView):
     model = Project
     form_class = NewProjectForm
     template_name = 'task_time_tracker/new-project.html'
 
     extra_context = {'page_title': 'Start a New Project'}
+
+    def get_success_url(self):
+        return reverse('todays_tasks')
 
 class InactiveTaskListView(SingleTableView):
     model = Task
