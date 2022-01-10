@@ -61,6 +61,7 @@ class UpdateTaskForm(forms.ModelForm):
         model = Task
         fields = (
             'task_name',
+            'priority',
             'task_category',
             'task_notes',
             'expected_mins',
