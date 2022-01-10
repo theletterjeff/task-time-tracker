@@ -477,6 +477,9 @@ class SeleniumTests(StaticLiveServerTestCase):
     
     def test_date_string_transformed_to_datetime_in_new_project(self):
         raise Exception('to do')
+    
+    def test_task_table_edit_button_redirects_to_todays_tasks(self):
+        raise Exception('to do')
 
 class TodaysTasksViewTests(TestCase):
 

@@ -130,7 +130,7 @@ class EditTaskView(UpdateView):
     def form_valid(self, form):
         task = form.save(commit=False)
         task.save()
-        return redirect('dashboard')
+        return redirect('todays_tasks')
 
 class DeleteTaskView(DeleteView):
     model = Task
