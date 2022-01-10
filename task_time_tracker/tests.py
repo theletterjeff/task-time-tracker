@@ -11,6 +11,8 @@ from django.urls import reverse
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 from lorem import get_word
 
@@ -442,6 +444,28 @@ class SeleniumTests(StaticLiveServerTestCase):
         sleep(1)
         assert Project.objects.filter(name='test_name')
     
+    def test_submit_new_project_form_redirects_to_todays_tasks(self):
+        """
+        Filling and submitting a project redirects to the page for
+        today's tasks
+        """
+        new_project_url = '%s%s' % (self.live_server_url, reverse('new_project'))
+        self.driver.get(new_project_url)
+
+        # Fill in required field
+        name_field = self.driver.find_element_by_id('id_name')
+        name_field.send_keys('test_name')
+
+        # Submit
+        submit_button = self.driver.find_element_by_class_name('btn')
+        submit_button.send_keys(Keys.RETURN)
+
+        # Wait until page redirects
+        WebDriverWait(self.driver, 10).until(EC.url_changes(new_project_url))
+
+        todays_tasks_url = '%s%s' % (self.live_server_url, reverse('todays_tasks'))
+        self.assertEqual(self.driver.current_url, todays_tasks_url)
+
 
 class TodaysTasksViewTests(TestCase):
 
