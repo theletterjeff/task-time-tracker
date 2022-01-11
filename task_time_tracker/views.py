@@ -140,7 +140,7 @@ class DeleteTaskView(DeleteView):
 
 class TodaysTaskView(SingleTableView):
     queryset = Task.objects.filter(active=True)
-    queryset = queryset.order_by('completed')
+    queryset = queryset.order_by('completed', '-priority')
 
     template_name = 'task_time_tracker/todays-tasks.html'
     table_class = AllTaskTable
