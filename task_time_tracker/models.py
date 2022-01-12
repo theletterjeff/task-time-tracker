@@ -5,6 +5,8 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
+from .exceptions import StartDateError
+
 class TaskStatusChange(models.Model):
     
     task = models.ForeignKey('Task', on_delete=models.CASCADE)
@@ -111,3 +113,8 @@ class Project(models.Model):
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
     completed_date = models.DateTimeField(blank=True, null=True)
+
+    def clean(self):
+        """Check start_date against end_date"""
+        if self.start_date > self.end_date:
+            raise StartDateError(self.start_date, 'end_date', self.end_date)

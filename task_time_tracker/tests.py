@@ -16,6 +16,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from lorem import get_word
 
+from .exceptions import StartDateError
 from .models import Task, Project, TaskStatusChange
 
 def create_task(task_name=get_word(count=2),
@@ -539,9 +540,6 @@ class SeleniumTests(StaticLiveServerTestCase):
     def test_null_values_in_nullable_project_form_columns_accepted(self):
         raise Exception('to do')
     
-    def test_start_date_after_end_date_raises_exc_in_new_project(self):
-        raise Exception('to do')
-    
     def test_non_date_value_in_date_fields_raises_exc_in_new_project(self):
         raise Exception('to do')
     
@@ -585,3 +583,19 @@ class EditTaskViewTests(TestCase):
         in the correct order
         """
         raise Exception('to do')
+
+class NewProjectFormTests(TestCase):
+
+    def test_new_project_start_date_after_end_date_raises_exc(self):
+        """
+        Creating a new project with a start date after the end
+        date raises an exception
+        """
+        c = Client()
+        post_data = {
+            'name': get_word(2),
+            'start_date': '1/1/2022',
+            'end_date': '12/31/2021',
+        }
+        with self.assertRaises(StartDateError):
+            c.post(reverse('new_project'), post_data)
