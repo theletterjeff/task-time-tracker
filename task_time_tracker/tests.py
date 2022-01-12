@@ -16,13 +16,12 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from lorem import get_word
 
-from .models import Task, Project
+from .models import Task, Project, TaskStatusChange
 
-def create_task(
-    task_name=get_word(count=2),
-    expected_mins=1,
-    **kwargs
-):
+def create_task(task_name=get_word(count=2),
+                expected_mins=1,
+                **kwargs):
+    """Create a dummy task"""
     return Task.objects.create(
         task_name=task_name,
         expected_mins=expected_mins,
@@ -31,9 +30,16 @@ def create_task(
 
 def create_project(name=get_word(count=2),
                    **kwargs):
+    """Create a dummy project"""
     return Project.objects.create(name=name,
                                   **kwargs)
 
+def get_mocked_datetime():
+    """Get a constant datetime object for use in mocked tests"""
+    return datetime.datetime(
+        2022, 1, 1, 0, 0, 0,
+        tzinfo=pytz.timezone('America/New_York')
+    )
 
 class TaskModelTests(TestCase):
 
@@ -113,14 +119,11 @@ class ProjectModelTests(TestCase):
         """
         Default new project created_date is now.
         """
-        mocked = datetime.datetime(
-            2022, 1, 1, 0, 0, 0,
-            tzinfo=pytz.timezone('America/New_York')
-        )
+        mocked_datetime = get_mocked_datetime()
         with mock.patch('django.utils.timezone.now',
-                        mock.Mock(return_value=mocked)):
+                        mock.Mock(return_value=mocked_datetime)):
             project = create_project()
-            self.assertEqual(project.created_date, mocked)
+            self.assertEqual(project.created_date, mocked_datetime)
     
     def test_new_project_description_empty_string(self):
         """
@@ -129,6 +132,62 @@ class ProjectModelTests(TestCase):
         """
         project = create_project()
         self.assertEqual(project.description, '')
+
+class TaskStatusChangeTests(TestCase):
+
+    def test_task_active_status_change_creates_taskstatuschange_obj(self):
+        """Changing a task's active property from False to True
+        or from True to False creates a related TaskStatusChange object"""
+        task_1 = create_task(active=False)
+        task_1.active = True
+        task_1.save()
+
+        assert TaskStatusChange.objects.get(task=task_1)
+
+        task_2 = create_task(active=True)
+        task_2.active = False
+        task_2.save()
+
+        assert TaskStatusChange.objects.get(task=task_2)
+
+    def test_inactive_to_active_change_updates_active_datetime(self):
+        """Changing a task's active property from False
+        to True adds the current datetime to active_datetime
+        field in TaskStatusChange model"""
+        task = create_task(active=False)
+        mocked_datetime = get_mocked_datetime()
+
+        with mock.patch('django.utils.timezone.now',
+                        mock.Mock(return_value=mocked_datetime)):
+            task.active = True
+            task.save()
+
+            related_taskstatuschange_obj = TaskStatusChange.objects.get(task=task)
+            
+            self.assertEqual(
+                related_taskstatuschange_obj.active_datetime,
+                mocked_datetime
+            )
+    
+    def test_inactive_to_active_change_updates_inactive_datetime(self):
+        """Changing a task's active property from True
+        to False adds the current datetime to inactive_datetime
+        field in TaskStatusChange model"""
+        task = create_task(active=True)
+        mocked_datetime = get_mocked_datetime()
+
+        with mock.patch('django.utils.timezone.now',
+                        mock.Mock(return_value=mocked_datetime)):
+            task.active = False
+            task.save()
+
+            related_taskstatuschange_obj = TaskStatusChange.objects.get(task=task)
+            
+            self.assertEqual(
+                related_taskstatuschange_obj.inactive_datetime,
+                mocked_datetime
+            )
+
 
 class TaskDashboardViewTests(TestCase):
 

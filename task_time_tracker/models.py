@@ -2,7 +2,15 @@ from datetime import datetime
 
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+
+class TaskStatusChange(models.Model):
+    
+    task = models.ForeignKey('Task', on_delete=models.CASCADE)
+
+    active_datetime = models.DateTimeField(blank=True, null=True)
+    inactive_datetime = models.DateTimeField(blank=True, null=True)
 
 class Task(models.Model):
 
@@ -52,6 +60,26 @@ class Task(models.Model):
 
     def __str__(self):
         return f'{self.id} "{self.task_name}" created on {self.created_date.strftime("%m/%d/%y")}'
+    
+    def __init__(self, *args, **kwargs):
+        """Store old active value to see if it changes"""
+        super(Task, self).__init__(*args, **kwargs)
+        self.old_active = self.active
+    
+    def save(self, *args, **kwargs):
+        """Create TaskActivity instance if active changes"""
+        if self.old_active == False and self.active == True:
+            TaskStatusChange.objects.create(
+                task=self,
+                active_datetime=timezone.now(),
+            )
+        elif self.old_active == True and self.active == False:
+            TaskStatusChange.objects.create(
+                task=self,
+                inactive_datetime=timezone.now(),
+            )
+        super(Task, self).save(*args, **kwargs)
+
     
     def edit_task_url(self):
         return reverse('edit_task', kwargs={'pk': self.id})
