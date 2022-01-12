@@ -12,6 +12,8 @@ class TaskStatusChange(models.Model):
     active_datetime = models.DateTimeField(blank=True, null=True)
     inactive_datetime = models.DateTimeField(blank=True, null=True)
 
+    completed_datetime = models.DateTimeField(blank=True, null=True)
+
 class Task(models.Model):
 
     # Text values
@@ -62,12 +64,14 @@ class Task(models.Model):
         return f'{self.id} "{self.task_name}" created on {self.created_date.strftime("%m/%d/%y")}'
     
     def __init__(self, *args, **kwargs):
-        """Store old active value to see if it changes"""
+        """Store old active values to see if they change"""
         super(Task, self).__init__(*args, **kwargs)
         self.old_active = self.active
+        self.old_completed = self.completed
     
     def save(self, *args, **kwargs):
         """Create TaskActivity instance if active changes"""
+        # Active
         if self.old_active == False and self.active == True:
             TaskStatusChange.objects.create(
                 task=self,
@@ -77,6 +81,13 @@ class Task(models.Model):
             TaskStatusChange.objects.create(
                 task=self,
                 inactive_datetime=timezone.now(),
+            )
+        
+        # Completed
+        if self.old_completed == False and self.completed == True:
+            TaskStatusChange.objects.create(
+                task=self,
+                completed_datetime=timezone.now(),
             )
         super(Task, self).save(*args, **kwargs)
 

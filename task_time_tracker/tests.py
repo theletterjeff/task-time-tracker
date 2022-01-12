@@ -149,6 +149,17 @@ class TaskStatusChangeTests(TestCase):
         task_2.save()
 
         assert TaskStatusChange.objects.get(task=task_2)
+    
+    def test_completing_task_creates_taskstatuschange_obj(self):
+        """
+        Changing a task's completed property from False to True
+        creates a related TaskStatusChange object
+        """
+        task = create_task(completed=False)
+        task.completed = True
+        task.save()
+
+        assert TaskStatusChange.objects.get(task=task)
 
     def test_inactive_to_active_change_updates_active_datetime(self):
         """Changing a task's active property from False
