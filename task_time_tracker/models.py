@@ -118,3 +118,6 @@ class Project(models.Model):
         """Check start_date against end_date"""
         if self.start_date > self.end_date:
             raise StartDateError(self.start_date, 'end_date', self.end_date)
+    
+    def __str__(self):
+        return self.name
