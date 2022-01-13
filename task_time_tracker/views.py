@@ -104,21 +104,6 @@ class NewProjectView(CreateView):
     def get_success_url(self):
         return reverse('todays_tasks')
 
-class InactiveTaskListView(SingleTableView):
-    model = Task
-    table_class = AllTaskTable
-    template_name = 'task_time_tracker/inactive_tasks.html'
-
-def inactive_tasks(request):
-    table = AllTaskTable(
-        Task.objects.filter(active=False, completed=False)
-    )
-    return render(
-        request,
-        'task_time_tracker/inactive_tasks.html',
-        {'table': table}
-    )
-
 class EditTaskView(UpdateView):
     model = Task
     form_class = UpdateTaskForm
