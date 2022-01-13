@@ -457,22 +457,31 @@ class SeleniumTests(StaticLiveServerTestCase):
         self.driver.get('%s%s' % (self.live_server_url, reverse('dashboard')))
         sidebar_link_elements = self.driver.find_elements_by_class_name('nav-link')
         
-        # Test links
-        sidebar_urls = [element.get_property('href')
+        # Actual URLs
+        sidebar_urls = [element.get_property('href').replace(
+                            self.live_server_url, '')
                          for element
                          in sidebar_link_elements]
+        
+        # Intended URLs
         url_names = [
             'dashboard',
             'new_task',
             'new_project',
             'todays_tasks',
+            'inactive_tasks'
         ]
         intended_urls = [reverse(url_name)
                          for url_name
                          in url_names]
+
+        # Test all intended URLs are in sidebar
+        for idx, intended_url in enumerate(intended_urls):
+            self.assertEqual(intended_url, sidebar_urls[idx])
         
-        for actual_url, intended_url in zip(sidebar_urls, intended_urls):
-            self.assertTrue(actual_url.endswith(intended_url))
+        # Test all sidebar URLs are intended
+        for idx, sidebar_url in enumerate(sidebar_urls):
+            self.assertEqual(sidebar_url, intended_urls[idx])
         
         # Test text
         sidebar_texts = [element.text
@@ -483,9 +492,16 @@ class SeleniumTests(StaticLiveServerTestCase):
             'New Task',
             'New Project',
             "Today's Tasks",
+            'Inactive Tasks',
         ]
-        for actual_text, intended_text in zip(sidebar_texts, intended_texts):
-            self.assertEqual(actual_text, intended_text)
+
+        # Test all intended text is in sidebar
+        for idx, intended_text in enumerate(intended_texts):
+            self.assertEqual(intended_text, sidebar_texts[idx])
+        
+        # Test all sidebar text is intended
+        for idx, sidebar_text in enumerate(sidebar_texts):
+            self.assertEqual(sidebar_text, intended_texts[idx])
     
     ### New Project Tests ###
 
@@ -599,3 +615,8 @@ class NewProjectFormTests(TestCase):
         }
         with self.assertRaises(StartDateError):
             c.post(reverse('new_project'), post_data)
+
+class InactiveTasksViewTests(TestCase):
+
+    def test_number_one(self):
+        raise Exception('TBD, to do')
