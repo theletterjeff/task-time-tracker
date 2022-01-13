@@ -562,8 +562,31 @@ class SeleniumTests(StaticLiveServerTestCase):
     def test_date_string_transformed_to_datetime_in_new_project(self):
         raise Exception('to do')
     
-    def test_task_table_edit_button_redirects_to_todays_tasks(self):
-        raise Exception('to do')
+    def test_task_edit_submit_redirects_to_todays_tasks(self):
+        """
+        Editing a task redirects to the page for today's tasks
+        """
+        # Create a dummy task
+        create_task(task_name='task_1')
+
+        # Get task id (for URL slug)
+        task_pk = Task.objects.get(task_name='task_1').pk
+        
+        # Formulate URL for edit task
+        edit_task_url = '%s%s' % (self.live_server_url,
+                                  reverse('edit_task', kwargs={'pk': task_pk}))
+        
+        self.driver.get(edit_task_url)
+
+        # Submit without edits
+        submit_button = self.driver.find_element_by_class_name('btn')
+        submit_button.send_keys(Keys.RETURN)
+
+        # Wait until page redirects
+        WebDriverWait(self.driver, 10).until(EC.url_changes(edit_task_url))
+
+        todays_tasks_url = '%s%s' % (self.live_server_url, reverse('todays_tasks'))
+        self.assertEqual(self.driver.current_url, todays_tasks_url)
 
 class TodaysTasksViewTests(TestCase):
 
