@@ -618,5 +618,26 @@ class NewProjectFormTests(TestCase):
 
 class InactiveTasksViewTests(TestCase):
 
-    def test_number_one(self):
-        raise Exception('TBD, to do')
+    def test_context_filled_w_inactive_incomplete_tasks(self):
+        """
+        View contains inactive, incomplete tasks and excludes inactive tasks.
+        """
+        create_task(task_name='task_1', active=True, completed=False)
+        create_task(task_name='task_2', active=True, completed=True)
+        create_task(task_name='task_3', active=False, completed=False)
+        create_task(task_name='task_4', active=False, completed=True)
+
+        response = self.client.get(reverse('inactive_tasks'))
+        context_queryset = response.context['task_list']
+
+        self.assertEqual(len(context_queryset), 1)
+        
+        task_names = [task.task_name for task in context_queryset]
+
+        # Includes inactive, incomplete tasks
+        self.assertTrue('task_3' in task_names)
+
+        # Excludes inactive tasks
+        self.assertTrue('task_1' not in task_names)
+        self.assertTrue('task_2' not in task_names)
+        self.assertTrue('task_4' not in task_names)
