@@ -16,6 +16,8 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from lorem import get_word
 
+from .forms import NewProjectForm
+
 from .exceptions import StartDateError
 from .models import Task, Project, TaskStatusChange
 
@@ -552,15 +554,6 @@ class SeleniumTests(StaticLiveServerTestCase):
 
         todays_tasks_url = '%s%s' % (self.live_server_url, reverse('todays_tasks'))
         self.assertEqual(self.driver.current_url, todays_tasks_url)
-
-    def test_null_values_in_nullable_project_form_columns_accepted(self):
-        raise Exception('to do')
-    
-    def test_non_date_value_in_date_fields_raises_exc_in_new_project(self):
-        raise Exception('to do')
-    
-    def test_date_string_transformed_to_datetime_in_new_project(self):
-        raise Exception('to do')
     
     def test_task_edit_submit_redirects_to_todays_tasks(self):
         """
@@ -625,20 +618,43 @@ class EditTaskViewTests(TestCase):
 
 class NewProjectFormTests(TestCase):
 
-    def test_new_project_start_date_after_end_date_raises_exc(self):
+    def test_empty_new_project_form_is_invalid(self):
         """
-        Creating a new project with a start date after the end
-        date raises an exception
+        A completely empty new project form is invalid
         """
-        c = Client()
-        post_data = {
-            'name': get_word(2),
+        form = NewProjectForm()
+        self.assertFalse(form.is_valid())
+
+    def test_new_project_form_with_only_name_specified_is_valid(self):
+        """
+        Creating a new project with only the name supplied is valid
+        """
+        form = NewProjectForm(data={'name': get_word(2)})
+        self.assertTrue(form.is_valid())
+    
+    def test_new_project_form_start_date_after_end_date_is_invalid(self):
+        """
+        Creating a new project with a start date after the end date
+        is deemed invalid
+        """
+        data = {
             'start_date': '1/1/2022',
             'end_date': '12/31/2021',
         }
-        with self.assertRaises(StartDateError):
-            c.post(reverse('new_project'), post_data)
-
+        self.assertFalse(NewProjectForm(data=data).is_valid())
+    
+    def test_non_date_value_in_date_fields_is_invalid(self):
+        """
+        Submittting a non-date value in a date field raises an exception
+        """
+        test_vals = [
+            'abc',
+            '123',
+            '*!%#',
+        ]
+        for val in test_vals:
+            self.assertFalse(NewProjectForm(data={'start_date': val}).is_valid())
+    
 class InactiveTasksViewTests(TestCase):
 
     def test_context_filled_w_inactive_incomplete_tasks(self):

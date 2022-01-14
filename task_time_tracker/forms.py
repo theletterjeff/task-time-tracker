@@ -1,5 +1,7 @@
-from .models import Project, Task
 from django import forms
+
+from .models import Project, Task
+from .exceptions import StartDateError
 
 styles = {
     'short_input': forms.TextInput(attrs={'class': 'short-input'}),
@@ -38,6 +40,20 @@ class NewProjectForm(forms.ModelForm):
             'start_date',
             'end_date',
         )
+    
+    def clean(self):
+        """Check start_date against end_date"""
+        super(NewProjectForm, self).clean()
+
+        start_date = self.cleaned_data.get('start_date')
+        end_date = self.cleaned_data.get('end_date')
+
+        if start_date and end_date: 
+            if start_date > end_date:
+                self._errors['end_date'] = self.error_class([
+                    'End date must come after start date'])
+        
+        return self.cleaned_data
 
 class NewTaskForm(forms.ModelForm):
     class Meta:

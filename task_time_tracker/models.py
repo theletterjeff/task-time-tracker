@@ -113,11 +113,6 @@ class Project(models.Model):
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
     completed_date = models.DateTimeField(blank=True, null=True)
-
-    def clean(self):
-        """Check start_date against end_date"""
-        if self.start_date > self.end_date:
-            raise StartDateError(self.start_date, 'end_date', self.end_date)
     
     def __str__(self):
         return self.name
