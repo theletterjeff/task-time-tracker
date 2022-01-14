@@ -261,7 +261,7 @@ class TaskDashboardViewTests(TestCase):
     def test_todays_tasks_paginates_after_six_tasks(self):
         """
         Having more than 6 active tasks causes table to paginate.
-        Note: there's an advanced way to do this with Selenium.
+        Note: there's an advanced way to make this happen with Selenium.
         For now, I'm going to simply test to see if the page is
         still valid when it has 'page=2' in the URL.
         """
