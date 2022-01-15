@@ -86,6 +86,8 @@ DATABASES = {
     }
 }
 
+AUTH_USER_MODEL = 'task_time_tracker.User'
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
