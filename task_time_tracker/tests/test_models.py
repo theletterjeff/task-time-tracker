@@ -1,7 +1,9 @@
 import datetime
 from unittest import mock
 
+from django.contrib.auth import get_user_model
 from django.test import TestCase
+from django.db.utils import IntegrityError
 
 from task_time_tracker.models import Task, Project, TaskStatusChange
 from task_time_tracker.utils.test_helpers import create_task, create_project, get_mocked_datetime
@@ -163,3 +165,44 @@ class TaskStatusChangeModelTests(TestCase):
                 related_taskstatuschange_obj.inactive_datetime,
                 mocked_datetime
             )
+
+class UserModelTests(TestCase):
+
+    def test_create_user(self):
+        User = get_user_model()
+        user = User.objects.create_user(username='foo', password='bar')
+        self.assertEqual(user.username, 'foo')
+        self.assertTrue(user.is_active)
+    
+    def test_create_user_defaults_nonstaff_nonsuperuser(self):
+        User = get_user_model()
+        user = User.objects.create_user(username='foo', password='bar')
+        self.assertFalse(user.is_staff)
+        self.assertFalse(user.is_superuser)
+
+    def test_create_user_no_username_errors(self):
+        User = get_user_model()
+        with self.assertRaises(TypeError):
+            User.objects.create_user()
+        with self.assertRaises(ValueError):
+            User.objects.create_user(username='')
+        with self.assertRaises(ValueError):
+            User.objects.create_user(username='', password='bar')
+    
+    def test_create_duplicate_user(self):
+        User = get_user_model()
+        User.objects.create_user(username='foo', password='bar')
+        with self.assertRaises(IntegrityError):
+            User.objects.create_user(username='foo', password='')
+
+    def test_create_superuser(self):
+        User = get_user_model()
+        admin_user = User.objects.create_superuser(username='foo', password='bar')
+        self.assertEqual(admin_user.username, 'foo')
+        self.assertTrue(admin_user.is_active)
+        self.assertTrue(admin_user.is_staff)
+        self.assertTrue(admin_user.is_superuser)
+
+        with self.assertRaises(ValueError):
+            User.objects.create_superuser(
+                username='foo', password='bar', is_superuser=False)
