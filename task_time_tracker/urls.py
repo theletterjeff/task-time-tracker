@@ -11,6 +11,7 @@ urlpatterns = [
     path('delete-task/<int:pk>/', views.DeleteTaskView.as_view(), name='delete_task'),
     path('edit-task/<int:pk>/', views.EditTaskView.as_view(), name='edit_task'),
     path('todays-tasks/', views.TodaysTaskView.as_view(), name='todays_tasks'),
-    path('new-task', views.NewTaskView.as_view(), name='new_task'),
-    path('new-project', views.NewProjectView.as_view(), name='new_project'),
+    path('new-task/', views.NewTaskView.as_view(), name='new_task'),
+    path('new-project/', views.NewProjectView.as_view(), name='new_project'),
+    path('users/'), include('django')
 ]
