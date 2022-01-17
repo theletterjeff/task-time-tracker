@@ -221,3 +221,20 @@ class SeleniumTests(StaticLiveServerTestCase):
 
         page_title = self.driver.find_element_by_id('page-title')
         self.assertEqual(page_title.text, 'Log In')
+    
+    def test_password_reset_link_loads_password_reset_page(self):
+        """
+        Clicking on the password reset link loads the password reset page
+        """
+        login_url = '%s%s' % (self.live_server_url, reverse('login'))
+        self.driver.get(login_url)
+
+        # Fill in required field
+        pw_reset_link = self.driver.find_element_by_id('password-reset')
+        pw_reset_link.click()
+
+        # Wait until page redirects
+        WebDriverWait(self.driver, 10).until(EC.url_changes(login_url))
+
+        pw_reset_url = '%s%s' % (self.live_server_url, reverse('password_reset'))
+        self.assertEqual(self.driver.current_url, pw_reset_url)

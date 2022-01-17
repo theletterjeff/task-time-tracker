@@ -23,7 +23,9 @@
             {{ form | crispy }}
             <button type="submit" class="btn btn-primary btn-success btn-margin-bottom">Log In</button>
         </form>
-    
+        
+        <p><a href="{% url 'password_reset' %}" id='password-reset'>Reset password</a>
+
     </div>
 
 {% endblock %}
