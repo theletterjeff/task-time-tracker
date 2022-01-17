@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from lorem import get_word
 
-from task_time_tracker.forms import NewProjectForm
+from task_time_tracker.forms import NewProjectForm, SitePasswordResetForm
 from task_time_tracker.models import User
 from task_time_tracker.views import SiteLoginView
 
@@ -75,3 +75,12 @@ class LoginFormTests(TestCase):
         Submitting the login form redirects to the today's task page
         """
         raise Exception('to do')
+
+class PasswordResetFormTests(TestCase):
+
+    def test_blank_label_on_password_reset_form(self):
+        """
+        The label on the password reset form is equal to ''
+        """
+        form = SitePasswordResetForm
+        self.assertEqual(form.declared_fields['email'].label, '')
