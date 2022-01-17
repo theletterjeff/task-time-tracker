@@ -2,7 +2,10 @@ from django.core.paginator import EmptyPage
 from django.test import TestCase
 from django.urls import reverse
 
+from bs4 import BeautifulSoup
+
 from task_time_tracker.utils.test_helpers import create_task
+from task_time_tracker.forms import SitePasswordResetForm
 
 class TaskDashboardViewTests(TestCase):
 
@@ -269,10 +272,91 @@ class LoginViewTests(TestCase):
         """
         response = self.client.get(reverse('login'))
         assert response.context.get('page_title')
+
+class PasswordResetViewTests(TestCase):
+
+    def test_view_url_exists_at_desired_location(self):
+        response = self.client.get('/password_reset/')
+        self.assertEqual(response.status_code, 200)
     
-    def test_password_reset_in_url_conf(self):
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(reverse('password_reset'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_uses_correct_template(self):
         """
-        The URL password_reset is included in the
-        URL configuration script
+        Password reset view uses the template
+        'task_time_tracker/password_reset_form.html'
         """
-        assert reverse('password_reset')
+        response = self.client.get(reverse('password_reset'))
+        self.assertTemplateUsed(
+            response,
+            'task_time_tracker/password_reset_form.html'
+        )
+    
+    def test_view_uses_correct_form(self):
+        """
+        Password reset view uses SitePasswordResetForm
+        """
+        response = self.client.get(reverse('password_reset'))
+        self.assertEqual(response.context['form'].__class__, SitePasswordResetForm)
+    
+    def test_page_title_in_context(self):
+        """
+        Page title appears in context
+        """
+        response = self.client.get(reverse('password_reset'))
+        assert response.context['page_title']
+    
+    def test_page_title_uses_correct_text(self):
+        """
+        Page title is 'Reset Your Password'
+        """
+        response = self.client.get(reverse('password_reset'))
+        self.assertEqual(response.context['page_title'], 'Reset Your Password')
+
+class LogoutViewTests(TestCase):
+
+    def test_view_url_exists_at_desired_location(self):
+        response = self.client.get('/logout/')
+        self.assertEqual(response.status_code, 200)
+    
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(reverse('logout'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_uses_correct_template(self):
+        """
+        Logout view uses the template
+        'task_time_tracker/logout.html'
+        """
+        response = self.client.get(reverse('logout'))
+        self.assertTemplateUsed(
+            response,
+            'task_time_tracker/logout.html'
+        )
+    
+    def test_page_title_in_context(self):
+        """
+        Page title appears in context
+        """
+        response = self.client.get(reverse('logout'))
+        assert response.context['page_title']
+    
+    def test_page_title_uses_correct_text(self):
+        """
+        Page title is 'Logged Out'
+        """
+        response = self.client.get(reverse('logout'))
+        self.assertEqual(response.context['page_title'], 'Logged Out')
+
+    def test_link_to_login_uses_correct_url(self):
+        """
+        The link to the login page uses the URL for login
+        """
+        response = self.client.get(reverse('logout'))
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        # Find login link, test URL
+        login_link = soup.find(id='login-link')
+        self.assertEqual(login_link.get('href'), reverse('login'))
