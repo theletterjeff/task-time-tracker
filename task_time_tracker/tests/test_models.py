@@ -4,6 +4,7 @@ from unittest import mock
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.db.utils import IntegrityError
+from django.utils import timezone
 
 from task_time_tracker.models import Task, Project, TaskStatusChange
 from task_time_tracker.utils.test_helpers import create_task, create_project, get_mocked_datetime
@@ -20,7 +21,7 @@ class TaskModelTests(TestCase):
 
         # Second task
         task_2 = create_task()
-        task_2.created_date = datetime.datetime.now() + datetime.timedelta(days=1)
+        task_2.created_date = timezone.now() + datetime.timedelta(days=1)
         task_2.save()
 
         sorted_queryset_descending = Task.objects.all().order_by('-created_date')
