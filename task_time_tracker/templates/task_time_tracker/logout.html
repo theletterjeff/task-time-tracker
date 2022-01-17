@@ -1,0 +1,14 @@
+{% extends "task_time_tracker/base_layout.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+    <div class="col-xl-8">
+
+        <p>You're logged out.</p>
+        <a href="{% url 'login' %}" id="login-link">Click here to log back in.</a>
+
+    </div>
+
+{% endblock %}
