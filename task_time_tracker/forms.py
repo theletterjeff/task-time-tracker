@@ -1,7 +1,6 @@
 from django import forms
 
 from .models import Project, Task
-from .exceptions import StartDateError
 
 styles = {
     'short_input': forms.TextInput(attrs={'class': 'short-input'}),

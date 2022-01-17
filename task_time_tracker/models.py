@@ -6,8 +6,6 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from .exceptions import StartDateError
-
 class User(AbstractUser):
     class Meta:
         db_table = 'auth_user'
