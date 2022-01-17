@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import logging
 
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth import views as auth_views
 from django.db.models import Sum
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
@@ -13,7 +13,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from django_tables2 import SingleTableView, RequestConfig
 
-from .forms import NewProjectForm, NewTaskForm, NewTaskPageForm, UpdateTaskForm
+from .forms import NewProjectForm, NewTaskForm, NewTaskPageForm, UpdateTaskForm, SitePasswordResetForm
 from .models import Project, Task
 from .tables import ActiveTaskTable, AllTaskTable
 from .utils.model_helpers import DashboardSummStats, format_time
@@ -142,10 +142,17 @@ class InactiveTaskView(SingleTableView):
 
     extra_context = {'page_title': 'Inactive Tasks'}
 
-class SiteLoginView(LoginView):
+# Authentication Views
+
+class SiteLoginView(auth_views.LoginView):
     template_name = 'task_time_tracker/login.html'
     extra_context = {'page_title': 'Log In'}
 
-class SiteLogoutView(LogoutView):
+class SiteLogoutView(auth_views.LogoutView):
     template_name = 'task_time_tracker/logout.html'
     extra_context = {'page_title': 'Logged Out'}
+
+class SitePasswordResetView(auth_views.PasswordResetView):
+    template_name= 'task_time_tracker/password_reset_form.html'
+    form_class = SitePasswordResetForm
+    extra_context = {'page_title': 'Reset Your Password'}

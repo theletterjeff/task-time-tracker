@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.forms import PasswordResetForm
 
 from .models import Project, Task
 
@@ -89,3 +90,10 @@ class UpdateTaskForm(forms.ModelForm):
             'task_category': styles['short_input'],
             'task_notes': styles['long_input'],
         }
+
+class SitePasswordResetForm(PasswordResetForm):
+    email = forms.EmailField(
+        label='',
+        max_length=254,
+        widget=forms.EmailInput(attrs={'autocomplete': 'email'}),
+    )
