@@ -210,3 +210,14 @@ class SeleniumTests(StaticLiveServerTestCase):
         todays_tasks_url = '%s%s' % (self.live_server_url, reverse('todays_tasks'))
         self.assertEqual(self.driver.current_url, todays_tasks_url)
 
+    ### Log in tests ###
+
+    def test_correct_page_title_appears_on_login_page(self):
+        """
+        The page title "Log In" appears on the login page
+        """
+        login_url = '%s%s' % (self.live_server_url, reverse('login'))
+        self.driver.get(login_url)
+
+        page_title = self.driver.find_element_by_id('page-title')
+        self.assertEqual(page_title.text, 'Log In')
