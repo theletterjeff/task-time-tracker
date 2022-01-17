@@ -251,7 +251,7 @@ class LoginViewTests(TestCase):
         response = self.client.get('/login/')
         self.assertEqual(response.status_code, 200)
     
-    def tset_view_url_accessible_by_name(self):
+    def test_view_url_accessible_by_name(self):
         response = self.client.get(reverse('login'))
         self.assertEqual(response.status_code, 200)
 
