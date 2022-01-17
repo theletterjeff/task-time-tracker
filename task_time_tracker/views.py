@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 import logging
 
+from django.contrib.auth.views import LoginView
 from django.db.models import Sum
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
@@ -139,4 +140,8 @@ class InactiveTaskView(SingleTableView):
     template_name = 'task_time_tracker/todays-tasks.html'
     table_class = AllTaskTable
 
-    extra_context = {'page_title': "Inactive Tasks"}
+    extra_context = {'page_title': 'Inactive Tasks'}
+
+class SiteLogInView(LoginView):
+    template_name = 'task_time_tracker/login.html'
+    extra_context = {'page_title': 'Log In'}
