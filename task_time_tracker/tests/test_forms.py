@@ -3,6 +3,7 @@ from django.test import TestCase
 from lorem import get_word
 
 from task_time_tracker.forms import NewProjectForm
+from task_time_tracker.views import SiteLoginView
 
 class NewProjectFormTests(TestCase):
 

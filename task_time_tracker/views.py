@@ -142,6 +142,6 @@ class InactiveTaskView(SingleTableView):
 
     extra_context = {'page_title': 'Inactive Tasks'}
 
-class SiteLogInView(LoginView):
+class SiteLoginView(LoginView):
     template_name = 'task_time_tracker/login.html'
     extra_context = {'page_title': 'Log In'}
