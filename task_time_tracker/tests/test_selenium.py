@@ -229,7 +229,7 @@ class SeleniumTests(StaticLiveServerTestCase):
         login_url = '%s%s' % (self.live_server_url, reverse('login'))
         self.driver.get(login_url)
 
-        # Fill in required field
+        # Find, click password reset link
         pw_reset_link = self.driver.find_element_by_id('password-reset')
         pw_reset_link.click()
 
