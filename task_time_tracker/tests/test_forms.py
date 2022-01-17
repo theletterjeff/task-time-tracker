@@ -65,7 +65,13 @@ class LoginFormTests(TestCase):
     
     def test_login_form_with_incorrect_credentials_does_not_log_in_user(self):
         """
-        Submitting inccorrect credentials to the login form does not log the user in
+        Submitting incorrect credentials to the login form does not log the user in
         """
         bad_credentials = {'username': 'a', 'password': 'b'}
         self.assertFalse(self.client.login(**bad_credentials))
+    
+    def test_login_page_redirects_to_todays_tasks(self):
+        """
+        Submitting the login form redirects to the today's task page
+        """
+        raise Exception('to do')
