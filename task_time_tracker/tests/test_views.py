@@ -244,4 +244,24 @@ class InactiveTasksViewTests(TestCase):
         self.assertTrue('task_1' not in task_names)
         self.assertTrue('task_2' not in task_names)
         self.assertTrue('task_4' not in task_names)
-        
+
+class LoginViewTests(TestCase):
+
+    def test_view_url_exists_at_desired_location(self):
+        response = self.client.get('/accounts/login/')
+        self.assertEqual(response.status_code, 200)
+    
+    def tset_view_url_accessible_by_name(self):
+        response = self.client.get(reverse('login'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_login_template_used(self):
+        """Calls to /accounts/login/ return a template"""
+        response = self.client.get(reverse('login'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed('registration/login.html')
+
+    def test_page_title_passed_in_context(self):
+        """Context passed to LogInView includes page_title"""
+        response = self.client.get(reverse('login'))
+        assert response.context.get('page_title')
