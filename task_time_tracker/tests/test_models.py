@@ -174,17 +174,23 @@ class TaskStatusChangeModelTests(TestCase):
 
 class UserModelTests(TestCase):
 
-    def test_create_user(self):
+    @classmethod
+    def setUpClass(cls) -> None:
         User = get_user_model()
-        user = User.objects.create_user(username='foo', password='bar')
-        self.assertEqual(user.username, 'foo')
-        self.assertTrue(user.is_active)
+        cls.user = User.objects.create_user(
+            username='usermodelusername',
+            password='usermodelpassword'
+        )
+        return super().setUpClass()
+
+
+    def test_user_default_is_active(self):
+        """Newly created users' is_active property is True by default"""
+        self.assertTrue(self.user.is_active)
     
     def test_create_user_defaults_nonstaff_nonsuperuser(self):
-        User = get_user_model()
-        user = User.objects.create_user(username='foo', password='bar')
-        self.assertFalse(user.is_staff)
-        self.assertFalse(user.is_superuser)
+        self.assertFalse(self.user.is_staff)
+        self.assertFalse(self.user.is_superuser)
 
     def test_create_user_no_username_errors(self):
         User = get_user_model()
@@ -196,19 +202,35 @@ class UserModelTests(TestCase):
             User.objects.create_user(username='', password='bar')
     
     def test_create_duplicate_user(self):
+        """
+        Creating a user with the same username as another one
+        in the database raises an IntegrityError
+        """
         User = get_user_model()
-        User.objects.create_user(username='foo', password='bar')
         with self.assertRaises(IntegrityError):
-            User.objects.create_user(username='foo', password='')
+            # We already created user 'foo' in setUpClas
+            User.objects.create_user(username='usermodelusername', password='thisisapassword1234')
 
     def test_create_superuser(self):
         User = get_user_model()
-        admin_user = User.objects.create_superuser(username='foo', password='bar')
-        self.assertEqual(admin_user.username, 'foo')
+        admin_user = User.objects.create_superuser(
+            username='admin_username',
+            password='admin_password'
+        )
+        self.assertEqual(admin_user.username, 'admin_username')
         self.assertTrue(admin_user.is_active)
         self.assertTrue(admin_user.is_staff)
         self.assertTrue(admin_user.is_superuser)
 
+    def test_create_superuser_with_is_superuser_false_raises_exception(self):
+        """
+        Creating a superuser with parameter is_superuser set to False
+        throws a ValueError
+        """
+        User = get_user_model()
         with self.assertRaises(ValueError):
             User.objects.create_superuser(
-                username='foo', password='bar', is_superuser=False)
+                username='another_admin_username',
+                password='another_admin_password',
+                is_superuser=False
+        )

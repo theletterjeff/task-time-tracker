@@ -4,9 +4,8 @@ from django.urls import reverse
 
 from lorem import get_word
 
-from task_time_tracker.forms import NewProjectForm, SitePasswordResetForm
-from task_time_tracker.models import User
-from task_time_tracker.views import SiteLoginView
+from task_time_tracker.forms import EditTaskForm, NewProjectForm, SitePasswordResetForm
+from task_time_tracker.views import SitePasswordResetConfirmView
 
 class NewProjectFormTests(TestCase):
 
@@ -46,13 +45,33 @@ class NewProjectFormTests(TestCase):
         ]
         for val in test_vals:
             self.assertFalse(NewProjectForm(data={'start_date': val}).is_valid())
+
+class EditTaskFormTests(TestCase):
+
+    def test_correct_list_and_order_edit_task_form_fields(self):
+        """
+        Edit task form should contain the correct fields
+        in the correct order
+        """
+        form = EditTaskForm
+        intended_fields = (
+            'task_name',
+            'priority',
+            'task_category',
+            'task_notes',
+            'expected_mins',
+            'actual_mins',
+            'completed',
+            'active',
+        )
+        self.assertEqual(form._meta.fields, intended_fields)
     
 class LoginFormTests(TestCase):
 
     def setUp(self):
         self.credentials = {
-            'username': 'foo',
-            'password': 'bar',
+            'username': 'loginformusername',
+            'password': 'loginformpassword',
         }
         User = get_user_model()
         User.objects.create_user(**self.credentials)
@@ -67,16 +86,17 @@ class LoginFormTests(TestCase):
         """
         Submitting incorrect credentials to the login form does not log the user in
         """
-        bad_credentials = {'username': 'a', 'password': 'b'}
+        bad_credentials = {'username': 'nottherightlogin', 'password': 'nottherightpassword'}
         self.assertFalse(self.client.login(**bad_credentials))
-    
+
     def test_login_page_redirects_to_todays_tasks(self):
         """
         Submitting the login form redirects to the today's task page
         """
-        raise Exception('to do')
+        response = self.client.post(reverse('login'), **self.credentials)
+        self.assertRedirects(response, reverse('todays_tasks'))
 
-class PasswordResetFormTests(TestCase):
+class PasswordResetRequestFormTests(TestCase):
 
     def test_blank_label_on_password_reset_form(self):
         """
@@ -84,3 +104,47 @@ class PasswordResetFormTests(TestCase):
         """
         form = SitePasswordResetForm
         self.assertEqual(form.declared_fields['email'].label, '')
+    
+class PasswordResetConfirmFormTests(TestCase):
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        credentials = {
+            'username': 'passwordresetconfirmusername',
+            'password': 'passwordresetconfirmpassword',
+            'email': 'passwordresetconfirmemail@foo.com',
+        }
+        User = get_user_model()
+        cls.user = User.objects.create_user(**credentials)
+
+        return super().setUpClass()
+    
+    def test_correct_fields_in_password_reset_confirm_form(self):
+        """
+        The password reset confirm form includes the fields new_password1 and new_password2
+        """
+        form = SitePasswordResetConfirmView.form_class
+
+        self.assertEqual(list(form.declared_fields.keys()), ['new_password1', 'new_password2'])
+    
+    def test_matching_passwords_make_form_valid(self):
+        """
+        Form is valid if new_password1 and new_password2 match
+        """
+        form = SitePasswordResetConfirmView.form_class
+        data = {
+            'new_password1': 'thisisapassword1234',
+            'new_password2': 'thisisapassword1234',
+        }
+        self.assertTrue(form(user=self.user, data=data).is_valid())
+
+    def test_different_passwords_make_form_invalid(self):
+        """
+        Form is invalid if new_password1 and new_password2 don't match
+        """
+        form = SitePasswordResetConfirmView.form_class
+        data = {
+            'new_password1': 'thisisapassword1234',
+            'new_password2': 'adifferentpassword0987',
+        }
+        self.assertFalse(form(user=self.user, data=data).is_valid())

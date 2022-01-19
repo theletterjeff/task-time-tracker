@@ -1,6 +1,12 @@
+from lib2to3.pgen2 import token
+from django.contrib.auth import get_user_model
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.core import mail
 from django.core.paginator import EmptyPage
 from django.test import TestCase
 from django.urls import reverse
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 
 from bs4 import BeautifulSoup
 
@@ -213,15 +219,6 @@ class TodaysTasksViewTests(TestCase):
         self.assertTrue('task_3' not in task_names)
         self.assertTrue('task_4' not in task_names)
 
-class EditTaskViewTests(TestCase):
-
-    def test_correct_list_and_order_edit_task_form_fields(self):
-        """
-        Edit task form should contain the correct fields
-        in the correct order
-        """
-        raise Exception('to do')
-
 class InactiveTasksViewTests(TestCase):
 
     def test_context_filled_w_inactive_incomplete_tasks(self):
@@ -314,6 +311,41 @@ class PasswordResetViewTests(TestCase):
         """
         response = self.client.get(reverse('password_reset'))
         self.assertEqual(response.context['page_title'], 'Reset Your Password')
+    
+    def test_submit_w_valid_email_sends_email(self):
+        """
+        Submitting the password reset form after entering a valid
+        email address sends an email prompt to the user
+        """
+        # Create a new user
+        User = get_user_model()
+        credentials = {
+            'username': 'test_submit_w_valid_email_username',
+            'password': 'test_submit_w_valid_email_password',
+            'email': 'test_submit_w_valid_email_emailaddress@foo.com',
+        }
+        user = User.objects.create_user(**credentials)
+
+        # Post password reset form
+        self.client.post(
+            reverse('password_reset'), 
+            {'email': 'test_submit_w_valid_email_emailaddress@foo.com'},
+            follow=True
+        )
+        
+        self.assertEqual(len(mail.outbox), 1)
+
+    def test_submit_wo_valid_email_does_not_send_email(self):
+        """
+        Submitting the password reset form after entering an invalid
+        email address does not any email
+        """
+        self.client.post(
+            reverse('password_reset'),
+            {'email': 'abc@abc.com'},
+            follow=True
+        )
+        self.assertEqual(len(mail.outbox), 0)
 
 class LogoutViewTests(TestCase):
 
@@ -360,3 +392,71 @@ class LogoutViewTests(TestCase):
         # Find login link, test URL
         login_link = soup.find(id='login-link')
         self.assertEqual(login_link.get('href'), reverse('login'))
+
+class PasswordResetConfirmViewTests(TestCase):
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        credentials = {
+            'username': 'passwordresetconfirmviewusername',
+            'password': 'passwordresetconfirmviewpassword',
+            'email': 'passwordresetconfirmviewemailaddress@foo.com',
+        }
+        User = get_user_model()
+        user = User.objects.create_user(**credentials)
+        user.save()
+
+        cls.token = PasswordResetTokenGenerator().make_token(user)
+        cls.uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+        return super().setUpClass()
+
+    def test_view_url_exists_at_desired_location(self):
+        response = self.client.get(f'/reset/{self.uid}/{self.token}/', follow=True)
+        self.assertEqual(response.status_code, 200)
+    
+    def test_view_url_accessible_by_name(self):
+        kwargs = {
+            'uidb64': self.uid,
+            'token': self.token,
+        }
+        response = self.client.get(reverse('password_reset_confirm', kwargs=kwargs), follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_uses_correct_template(self):
+        """
+        Password reset confirm view uses the template
+        'task_time_tracker/password_reset_confirm.html'
+        """
+        kwargs = {
+            'uidb64': self.uid,
+            'token': self.token,
+        }
+        response = self.client.get(reverse('password_reset_confirm', kwargs=kwargs), follow=True)
+        self.assertTemplateUsed(
+            response,
+            'task_time_tracker/password_reset_confirm.html'
+        )
+    
+    def test_page_title_in_context(self):
+        """
+        Page title appears in context
+        """
+        kwargs = {
+            'uidb64': self.uid,
+            'token': self.token,
+        }
+        response = self.client.get(reverse('password_reset_confirm', kwargs=kwargs), follow=True)
+        assert response.context['page_title']
+    
+    def test_page_title_uses_correct_text(self):
+        """
+        Page title is 'Reset Your Password'
+        """
+        kwargs = {
+            'uidb64': self.uid,
+            'token': self.token,
+        }
+        response = self.client.get(reverse('password_reset_confirm', kwargs=kwargs), follow=True)
+        self.assertEqual(response.context['page_title'], 'Reset Your Password')
+
