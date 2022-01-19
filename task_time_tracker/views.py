@@ -158,3 +158,7 @@ class SitePasswordResetView(auth_views.PasswordResetView):
     extra_context = {'page_title': 'Reset Your Password'}
 
     email_template_name = 'task_time_tracker/password_reset_email.html'
+
+class SitePasswordResetConfirmView(auth_views.PasswordResetConfirmView):
+    template_name = 'task_time_tracker/password_reset_confirm.html'
+    extra_context = {'page_title': 'Reset Your Password'}
