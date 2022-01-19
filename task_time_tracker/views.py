@@ -13,7 +13,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from django_tables2 import SingleTableView, RequestConfig
 
-from .forms import NewProjectForm, NewTaskForm, NewTaskPageForm, UpdateTaskForm, SitePasswordResetForm
+from .forms import NewProjectForm, NewTaskForm, NewTaskPageForm, EditTaskForm, SitePasswordResetForm
 from .models import Project, Task
 from .tables import ActiveTaskTable, AllTaskTable
 from .utils.model_helpers import DashboardSummStats, format_time
@@ -107,7 +107,7 @@ class NewProjectView(CreateView):
 
 class EditTaskView(UpdateView):
     model = Task
-    form_class = UpdateTaskForm
+    form_class = EditTaskForm
     template_name = 'task_time_tracker/edit_task.html'
     context_object_name = 'task'
 

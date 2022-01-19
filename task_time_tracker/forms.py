@@ -72,7 +72,7 @@ class NewTaskForm(forms.ModelForm):
             'expected_mins': styles['num_input'],
         }
 
-class UpdateTaskForm(forms.ModelForm):
+class EditTaskForm(forms.ModelForm):
     class Meta:
         model = Task
         fields = (
