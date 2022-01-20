@@ -77,6 +77,8 @@ DATABASES = {
 
 AUTH_USER_MODEL = 'task_time_tracker.User'
 
+LOGIN_REDIRECT_URL = '/todays-tasks/'
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators

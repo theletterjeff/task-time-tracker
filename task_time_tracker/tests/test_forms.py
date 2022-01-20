@@ -93,7 +93,7 @@ class LoginFormTests(TestCase):
         """
         Submitting the login form redirects to the today's task page
         """
-        response = self.client.post(reverse('login'), **self.credentials)
+        response = self.client.post(reverse('login'), data=self.credentials, follow=True)
         self.assertRedirects(response, reverse('todays_tasks'))
 
 class PasswordResetRequestFormTests(TestCase):
