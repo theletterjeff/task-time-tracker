@@ -1,5 +1,9 @@
 from time import sleep
 
+from django.contrib.auth import get_user_model
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.urls import reverse
 
@@ -256,3 +260,69 @@ class SeleniumTests(StaticLiveServerTestCase):
 
         login_url = '%s%s' % (self.live_server_url, reverse('login'))
         self.assertEqual(self.driver.current_url, login_url)
+    
+    ### Password reset confirm tests ###
+
+    def test_password_reset_confirm_button_redirects_to_complete_template(self):
+        """
+        Clicking the submit button on the password_reset_confirm page
+        redirects to the password_reset_complete page
+        """
+        credentials = {
+            'username': 'passwordresetconfirmseleniumusername',
+            'password': 'passwordresetconfirmseleniumpassword',
+            'email': 'passwordresetconfirmseleniumemailaddress@foo.com',
+        }
+        User = get_user_model()
+        user = User.objects.create_user(**credentials)
+
+        # Generate token and UID
+        token = PasswordResetTokenGenerator().make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+        # Get URL
+        password_reset_confirm_url = '%s%s' % (
+            self.live_server_url,
+            reverse(
+                'password_reset_confirm',
+                kwargs={
+                    'uidb64': uid,
+                    'token': token,
+                }
+            )
+        )
+
+        # Load page
+        self.driver.get(password_reset_confirm_url)
+
+        # Enter new password into new & confirm password inputs
+        new_password1 = self.driver.find_element_by_name(
+            'new_password1')
+        new_password2 = self.driver.find_element_by_name(
+            'new_password2')
+        
+        new_password1.send_keys('thisisanewpassword')
+        new_password2.send_keys('thisisanewpassword')
+
+        # Click submit
+        submit_button = self.driver.find_element_by_id(
+            'password-reset-confirm-button')
+        submit_button.click()
+
+        # Wait until page redirects
+        WebDriverWait(self.driver, 10).until(EC.url_changes(
+            password_reset_confirm_url))
+
+        password_reset_complete_url = (
+            '%s%s' % (
+                self.live_server_url,
+                reverse('password_reset_complete')
+            )
+        )
+        self.assertEqual(
+            self.driver.current_url,
+            password_reset_complete_url
+        )
+
+        # Clean up--delete user
+        user.delete()
