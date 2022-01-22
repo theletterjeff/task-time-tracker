@@ -153,12 +153,20 @@ class SiteLogoutView(auth_views.LogoutView):
     extra_context = {'page_title': 'Logged Out'}
 
 class SitePasswordResetView(auth_views.PasswordResetView):
-    template_name= 'task_time_tracker/password_reset_form.html'
+    template_name = 'task_time_tracker/password_reset_form.html'
     form_class = SitePasswordResetForm
     extra_context = {'page_title': 'Reset Your Password'}
 
     email_template_name = 'task_time_tracker/password_reset_email.html'
 
+class SitePasswordResetDoneView(auth_views.PasswordResetDoneView):
+    template_name = 'task_time_tracker/password_reset_done.html'
+    extra_context = {'page_title': 'Password Reset Requested'}
+
 class SitePasswordResetConfirmView(auth_views.PasswordResetConfirmView):
     template_name = 'task_time_tracker/password_reset_confirm.html'
     extra_context = {'page_title': 'Reset Your Password'}
+
+class SitePasswordResetCompleteView(auth_views.PasswordResetCompleteView):
+    template_name = 'task_time_tracker/password_reset_complete.html'
+    extra_context = {'page_title': 'Password Reset Complete'}
