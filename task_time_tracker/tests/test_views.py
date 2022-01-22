@@ -404,7 +404,6 @@ class PasswordResetConfirmViewTests(TestCase):
         }
         User = get_user_model()
         user = User.objects.create_user(**credentials)
-        user.save()
 
         cls.token = PasswordResetTokenGenerator().make_token(user)
         cls.uid = urlsafe_base64_encode(force_bytes(user.pk))
