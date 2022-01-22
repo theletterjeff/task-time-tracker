@@ -459,3 +459,72 @@ class PasswordResetConfirmViewTests(TestCase):
         response = self.client.get(reverse('password_reset_confirm', kwargs=kwargs), follow=True)
         self.assertEqual(response.context['page_title'], 'Reset Your Password')
 
+class PasswordResetDoneViewTests(TestCase):
+
+    def test_view_url_exists_at_desired_location(self):
+        response = self.client.get('/password_reset/done/')
+        self.assertEqual(response.status_code, 200)
+    
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(reverse('password_reset_done'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_uses_correct_template(self):
+        """
+        Password reset done view uses the template
+        'task_time_tracker/password_reset_done.html'
+        """
+        response = self.client.get(reverse('password_reset_done'))
+        self.assertTemplateUsed(
+            response,
+            'task_time_tracker/password_reset_done.html'
+        )
+    
+    def test_page_title_in_context(self):
+        """
+        Page title appears in context
+        """
+        response = self.client.get(reverse('password_reset_done'))
+        assert response.context['page_title']
+    
+    def test_page_title_uses_correct_text(self):
+        """
+        Page title is 'Password Reset Requested'
+        """
+        response = self.client.get(reverse('password_reset_done'))
+        self.assertEqual(response.context['page_title'], 'Password Reset Requested')
+
+class PasswordResetCompleteViewTests(TestCase):
+
+    def test_view_url_exists_at_desired_location(self):
+        response = self.client.get('/reset/done/')
+        self.assertEqual(response.status_code, 200)
+    
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(reverse('password_reset_complete'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_uses_correct_template(self):
+        """
+        Password reset complete view uses the template
+        'task_time_tracker/password_reset_complete.html'
+        """
+        response = self.client.get(reverse('password_reset_complete'))
+        self.assertTemplateUsed(
+            response,
+            'task_time_tracker/password_reset_complete.html'
+        )
+    
+    def test_page_title_in_context(self):
+        """
+        Page title appears in context
+        """
+        response = self.client.get(reverse('password_reset_complete'))
+        assert response.context['page_title']
+    
+    def test_page_title_uses_correct_text(self):
+        """
+        Page title is 'Password Reset Complete'
+        """
+        response = self.client.get(reverse('password_reset_complete'))
+        self.assertEqual(response.context['page_title'], 'Password Reset Complete')
