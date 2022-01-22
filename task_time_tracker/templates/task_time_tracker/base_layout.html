@@ -91,8 +91,24 @@
 
                 <!-- Topbar -->
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-                    <!-- Topbar Navbar -->
-                    <h1 class="navbar-nav" id="page-title">{{ page_title }}</h1>
+                    
+                    <!-- Page Title -->
+                    <div class='col-xl-8'>
+                        <h1 class="navbar-nav" id="page-title">{{ page_title }}</h1>
+                    </div>
+
+                    <!-- Log In / Log Out -->
+                    <div class='col-xl-4'>
+                        {% if user.is_authenticated %}
+                            <p id='login-logout'>
+                                <span class='top-right-content'>Welcome, {{ user.username }}</span>
+                                <span class='top-right-content'>|</span>
+                                <span class='top-rihgt-content'><a href="{% url 'logout' %}?next={{request.path}}">Log Out</a></span>
+                            </p>
+                        {% else %}
+                            <p id='login-logout'><a href="{% url 'login' %}?next={{request.path}}">Log In</a></p>
+                        {% endif %}
+                    </div>
                 </nav>
                 
                 <div class="container-fluid">

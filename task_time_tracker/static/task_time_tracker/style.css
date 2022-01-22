@@ -99,3 +99,14 @@ ul.pagination li.active a.page-link {
     color: white;
     background-color: rgb(206, 102, 18);
 }
+#login-logout {
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    color: rgb(99, 99, 99);
+    margin-bottom: 0rem;
+}
+.top-right-content {
+    margin-left: 5px;
+    margin-right: 5px;
+}
