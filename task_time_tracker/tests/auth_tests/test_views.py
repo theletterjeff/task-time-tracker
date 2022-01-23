@@ -309,3 +309,12 @@ class PasswordResetCompleteViewTests(TestCase):
         """
         response = self.client.get(reverse('password_reset_complete'))
         self.assertEqual(response.context['page_title'], 'Password Reset Complete')
+
+class SignupTests(TestCase):
+
+    def test_view_url_exists_at_desired_location(self):
+        """
+        Requests to /signup/ should return status code 200
+        """
+        response = self.client.get('/signup')
+        self.assertEqual(response.status_code, 200)
