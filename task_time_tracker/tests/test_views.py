@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model, get_user
 from django.core.paginator import EmptyPage
 from django.test import TestCase
 from django.urls import reverse
@@ -7,6 +8,40 @@ from task_time_tracker.utils.test_helpers import create_task
 print('main view tests running')
 
 class TaskDashboardViewTests(TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        """Create a user"""
+        super().setUpClass()
+
+        cls.credentials = {
+            'username': 'username',
+            'password': 'password',
+        }
+        cls.User = get_user_model()
+        cls.User.objects.create_user(**cls.credentials)
+    
+    @classmethod
+    def tearDownClass(cls):
+        """Delete the user"""
+        cls.User.objects.get(
+            username=cls.credentials['username']
+        ).delete()
+
+        super().tearDownClass()
+
+    def setUp(self):
+        """Log user in"""
+        super().setUp()
+        self.client.login(**self.credentials)
+
+    def test_unauthenticated_user_redirects(self):
+        """
+        Unauthenticated users get redirected to the login view/template
+        """
+        self.client.logout()
+        response = self.client.get(reverse('dashboard'))
+        self.assertEqual(response.status_code, 302)
 
     def test_page_load(self):
         """Response status for page load is 200"""

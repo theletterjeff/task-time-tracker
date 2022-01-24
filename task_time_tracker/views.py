@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import logging
 
 from django.contrib.auth import views as auth_views
+from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
@@ -20,6 +21,7 @@ from .utils.model_helpers import DashboardSummStats, format_time
 
 logger = logging.getLogger(__name__)
 
+@login_required
 def dashboard(request):
     """Dashboard page for the time tracker.
     Includes new tasks, active tasks w/edit,
