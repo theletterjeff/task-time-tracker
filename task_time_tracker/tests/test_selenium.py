@@ -1,25 +1,28 @@
 from time import sleep
 
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, get_user
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.urls import reverse
+from django.test import tag
 
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from task_time_tracker.models import Task, Project
+from task_time_tracker.models import Task, Project, User
 from task_time_tracker.utils.test_helpers import create_task
 
 class SeleniumTests(StaticLiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
+        """Create driver"""
         super().setUpClass()
 
         options = Options()
@@ -29,7 +32,33 @@ class SeleniumTests(StaticLiveServerTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.driver.close()
+        """Close driver"""
+        cls.driver.quit()
+        super().tearDownClass()
+    
+    def setUp(self):
+        """Create and log in user"""
+        super(SeleniumTests, self).setUp()
+
+        # Create user
+        user = User.objects.create(username='username')
+        user.set_password('password')
+        user.save()
+
+        # Log in user
+        self.assertTrue(self.client.login(username='username', password='password'))
+
+        # Add cookie to log in the browser
+        cookie = self.client.cookies['sessionid']
+        self.driver.get(self.live_server_url)
+        self.driver.add_cookie(
+            {
+                'name': 'sessionid',
+                'value': cookie.value,
+                'secure': False,
+                'path': '/',
+            }
+        )
     
     ### Dashboard tests ###
 
@@ -38,13 +67,17 @@ class SeleniumTests(StaticLiveServerTestCase):
         The card title for the "today's task" widget links to the
         standalone page for all of today's tasks.
         """
+        # Load dashboard
         self.driver.get('%s%s' % (self.live_server_url, reverse('dashboard')))
+
+        # Wait for widget title to appear, then assign it
         todays_tasks_widget_title = self.driver.find_element_by_id('todays-task-widget-title')
 
+        # Widget title should be a link
         self.assertEqual(todays_tasks_widget_title.tag_name, 'a')
 
+        # Link URL should be to the today's tasks page
         link_url = todays_tasks_widget_title.get_attribute(name='href')
-
         self.assertEqual(
             link_url,
             self.live_server_url + reverse('todays_tasks')
