@@ -5,7 +5,9 @@ from django.urls import reverse
 from bs4 import BeautifulSoup
 
 from task_time_tracker.forms import SitePasswordResetForm
-from task_time_tracker.views import SitePasswordResetConfirmView
+from task_time_tracker.models import User
+from task_time_tracker.views import (SitePasswordResetConfirmView,
+                                     SiteLoginView)
 
 class LoginFormTests(TestCase):
 
@@ -15,26 +17,40 @@ class LoginFormTests(TestCase):
         super().setUpClass()
 
         cls.credentials = {
-            'username': 'loginformusername',
-            'password': 'loginformpassword',
+            'username': 'username',
+            'password': 'password',
         }
+
         cls.User = get_user_model()
-        cls.User.objects.create_user(**cls.credentials)
+        user = cls.User.objects.create_user(username=cls.credentials['username'])
+        user.set_password(cls.credentials['password'])
+        user.save()
     
     @classmethod
     def tearDownClass(cls):
         """Delete the user"""
-        cls.User.objects.get(
-            username=cls.credentials['username']
-        ).delete()
-
+        cls.User.objects.get(username=cls.credentials['username']).delete()
         super().tearDownClass()
+    
+    def setUp(self):
+        """Log user in (if not already logged in)"""
+        super(LoginFormTests, self).setUp()
+        if '_auth_user_id' not in self.client.session:
+            self.client.login(
+                username=self.credentials['username'],
+                password=self.credentials['password'],
+            )
 
     def test_login_form_logs_user_in(self):
         """
         Submitting correct credentials to the login form logs the user in
         """
-        self.assertTrue(self.client.login(**self.credentials))
+        credentials = {
+            'username': 'username',
+            'password': 'password',
+        }
+        form = SiteLoginView.form_class(data=credentials)
+        self.assertTrue(form.is_valid())
     
     def test_login_form_with_incorrect_credentials_does_not_log_in_user(self):
         """
@@ -45,7 +61,8 @@ class LoginFormTests(TestCase):
             'username': 'nottherightlogin',
             'password': 'nottherightpassword'
         }
-        self.assertFalse(self.client.login(**bad_credentials))
+        form = SiteLoginView.form_class(data=bad_credentials)
+        self.assertFalse(form.is_valid())
 
     def test_login_page_redirects_to_todays_tasks(self):
         """
