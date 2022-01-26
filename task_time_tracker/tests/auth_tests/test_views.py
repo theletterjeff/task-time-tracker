@@ -46,6 +46,18 @@ class LoginViewTests(TestCase):
 
 class PasswordResetViewTests(TestCase):
 
+    def setUp(self):
+        super(PasswordResetViewTests, self).setUp()
+        
+        # Create a new user
+        User = get_user_model()
+        credentials = {
+            'username': 'test_submit_w_valid_email_username',
+            'password': 'test_submit_w_valid_email_password',
+            'email': 'test_submit_w_valid_email_emailaddress@foo.com',
+        }
+        User.objects.create_user(**credentials)
+
     def test_view_url_exists_at_desired_location(self):
         response = self.client.get('/password_reset/')
         self.assertEqual(response.status_code, 200)
@@ -91,22 +103,12 @@ class PasswordResetViewTests(TestCase):
         Submitting the password reset form after entering a valid
         email address sends an email prompt to the user
         """
-        # Create a new user
-        User = get_user_model()
-        credentials = {
-            'username': 'test_submit_w_valid_email_username',
-            'password': 'test_submit_w_valid_email_password',
-            'email': 'test_submit_w_valid_email_emailaddress@foo.com',
-        }
-        User.objects.create_user(**credentials)
-
         # Post password reset form
         self.client.post(
             reverse('password_reset'), 
             {'email': 'test_submit_w_valid_email_emailaddress@foo.com'},
             follow=True
         )
-        
         self.assertEqual(len(mail.outbox), 1)
 
     def test_submit_wo_valid_email_does_not_send_email(self):
