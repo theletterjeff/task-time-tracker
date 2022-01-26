@@ -324,11 +324,73 @@ class PasswordResetCompleteViewTests(TestCase):
         response = self.client.get(reverse('password_reset_complete'))
         self.assertEqual(response.context['page_title'], 'Password Reset Complete')
 
-class SignupTests(TestCase):
+class SignupViewTests(TestCase):
 
     def test_view_url_exists_at_desired_location(self):
         """
         Requests to /signup/ should return status code 200
         """
-        response = self.client.get('/signup')
+        response = self.client.get('/signup/')
         self.assertEqual(response.status_code, 200)
+    
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(reverse('signup'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_uses_correct_template(self):
+        """
+        Signup view uses the template 'task_time_tracker/signup.html'
+        """
+        response = self.client.get(reverse('signup'))
+        self.assertTemplateUsed(
+            response,
+            'task_time_tracker/signup.html'
+        )
+    
+    def test_page_title_in_context(self):
+        """
+        Page title appears in context
+        """
+        response = self.client.get(reverse('signup'))
+        assert response.context['page_title']
+    
+    def test_page_title_uses_correct_text(self):
+        """
+        Page title is 'Password Reset Complete'
+        """
+        response = self.client.get(reverse('signup'))
+        self.assertEqual(response.context['page_title'], 'Sign Up')
+    
+    def test_base_template_logged_out_has_signup_link(self):
+        """
+        Page content for base template when user is logged out
+        contains a link to sign up
+        """
+        # Make sure user isn't authenticated
+        if get_user(self.client).is_authenticated:
+            self.client.logout()
+
+        response = self.client.get(reverse('dashboard'), follow=True)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        
+        assert soup.find('a', string='Sign Up') 
+    
+    def test_posting_data_creates_new_user(self):
+        """
+        Submitting a POST request with new user data creates a new user
+        """
+        # Check to make sure there are no other users created
+        User = get_user_model()
+        self.assertEqual(len(User.objects.all()), 0)
+
+        signup_credentials = {
+            'username': 'username',
+            'password1': 'atestpassword',
+            'password2': 'atestpassword',
+            'email': 'email@email.com',
+        }
+        self.client.post(
+            reverse('signup'),
+            data=signup_credentials,
+        )
+        assert User.objects.get(username='username')

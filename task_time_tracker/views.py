@@ -3,6 +3,7 @@ import logging
 
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
+from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Sum
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
@@ -14,8 +15,13 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from django_tables2 import SingleTableView, RequestConfig
 
-from .forms import NewProjectForm, NewTaskForm, NewTaskPageForm, EditTaskForm, SitePasswordResetForm
-from .models import Project, Task
+from .forms import (NewProjectForm,
+                    NewTaskForm,
+                    NewTaskPageForm,
+                    EditTaskForm,
+                    SitePasswordResetForm,
+                    SiteUserCreationForm)
+from .models import Project, Task, User
 from .tables import ActiveTaskTable, AllTaskTable
 from .utils.model_helpers import DashboardSummStats, format_time
 
@@ -172,3 +178,14 @@ class SitePasswordResetConfirmView(auth_views.PasswordResetConfirmView):
 class SitePasswordResetCompleteView(auth_views.PasswordResetCompleteView):
     template_name = 'task_time_tracker/password_reset_complete.html'
     extra_context = {'page_title': 'Password Reset Complete'}
+
+class SignupView(SuccessMessageMixin, CreateView):
+    """Create a new user"""
+    model = User
+    form_class = SiteUserCreationForm
+    template_name = 'task_time_tracker/signup.html'
+
+    success_url = reverse_lazy('login')
+    success_message = 'Your profile was created successfully'
+
+    extra_context = {'page_title': 'Sign Up'}

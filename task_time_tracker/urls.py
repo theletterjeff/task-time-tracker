@@ -18,6 +18,9 @@ urlpatterns = [
 
 # User authentication
 urlpatterns += [
+    # Sign Up
+    path('signup/', views.SignupView.as_view(), name='signup'),
+
     # Log in
     path('login/', views.SiteLoginView.as_view(), name='login'),
     path('logout/', views.SiteLogoutView.as_view(), name='logout'),

@@ -128,6 +128,7 @@ class PasswordResetConfirmFormTests(TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
+        super().setUpClass()
         credentials = {
             'username': 'passwordresetconfirmusername',
             'password': 'passwordresetconfirmpassword',
@@ -135,8 +136,12 @@ class PasswordResetConfirmFormTests(TestCase):
         }
         User = get_user_model()
         cls.user = User.objects.create_user(**credentials)
-
-        return super().setUpClass()
+    
+    @classmethod
+    def tearDownClass(cls) -> None:
+        User = get_user_model()
+        User.objects.all().delete()
+        super().tearDownClass()
     
     def test_correct_fields_in_password_reset_confirm_form(self):
         """

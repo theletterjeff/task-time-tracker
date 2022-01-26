@@ -1,7 +1,8 @@
 from django import forms
-from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.forms import (PasswordResetForm,
+                                       UserCreationForm)
 
-from .models import Project, Task
+from .models import Project, Task, User
 
 styles = {
     'short_input': forms.TextInput(attrs={'class': 'short-input'}),
@@ -97,3 +98,15 @@ class SitePasswordResetForm(PasswordResetForm):
         max_length=254,
         widget=forms.EmailInput(attrs={'autocomplete': 'email'}),
     )
+
+class SiteUserCreationForm(UserCreationForm):
+    email = forms.EmailField()
+    
+    class Meta:
+        model = User
+        fields = (
+            'username',
+            'password1',
+            'password2',
+            'email',
+        )
