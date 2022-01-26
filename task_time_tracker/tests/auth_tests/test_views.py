@@ -128,7 +128,15 @@ class PasswordResetViewTests(TestCase):
         Password reset email's subject line is
         'Reset Your Task Time Tracker Password'
         """
-        raise Exception('to do')
+        self.client.post(
+            reverse('password_reset'), 
+            {'email': 'test_submit_w_valid_email_emailaddress@foo.com'},
+            follow=True
+        )
+        self.assertEqual(len(mail.outbox), 1)
+        
+        subject_line = mail.outbox[0].subject
+        self.assertEqual(subject_line, 'Reset Your Task Time Tracker Password')
 
 class LogoutViewTests(TestCase):
 
