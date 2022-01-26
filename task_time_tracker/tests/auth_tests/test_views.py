@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, get_user
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core import mail
 from django.test import TestCase
@@ -178,21 +178,29 @@ class PasswordResetConfirmViewTests(TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        credentials = {
+        super().setUpClass()
+        cls.credentials = {
             'username': 'passwordresetconfirmviewusername',
             'password': 'passwordresetconfirmviewpassword',
             'email': 'passwordresetconfirmviewemailaddress@foo.com',
         }
-        User = get_user_model()
-        user = User.objects.create_user(**credentials)
+        cls.User = get_user_model()
+        user = cls.User.objects.create_user(**cls.credentials)
 
         cls.token = PasswordResetTokenGenerator().make_token(user)
         cls.uid = urlsafe_base64_encode(force_bytes(user.pk))
-
-        return super().setUpClass()
+    
+    @classmethod
+    def tearDownClass(cls) -> None:
+        """Delete user"""
+        cls.User.objects.all().delete()
+        super().tearDownClass()
 
     def test_view_url_exists_at_desired_location(self):
-        response = self.client.get(f'/reset/{self.uid}/{self.token}/', follow=True)
+        response = self.client.get(
+            f'/reset/{self.uid}/{self.token}/',
+            follow=True
+        )
         self.assertEqual(response.status_code, 200)
     
     def test_view_url_accessible_by_name(self):
@@ -212,7 +220,10 @@ class PasswordResetConfirmViewTests(TestCase):
             'uidb64': self.uid,
             'token': self.token,
         }
-        response = self.client.get(reverse('password_reset_confirm', kwargs=kwargs), follow=True)
+        response = self.client.get(
+            reverse('password_reset_confirm', kwargs=kwargs),
+            follow=True
+        )
         self.assertTemplateUsed(
             response,
             'task_time_tracker/password_reset_confirm.html'
@@ -226,7 +237,10 @@ class PasswordResetConfirmViewTests(TestCase):
             'uidb64': self.uid,
             'token': self.token,
         }
-        response = self.client.get(reverse('password_reset_confirm', kwargs=kwargs), follow=True)
+        response = self.client.get(
+            reverse('password_reset_confirm', kwargs=kwargs),
+            follow=True
+        )
         assert response.context['page_title']
     
     def test_page_title_uses_correct_text(self):
