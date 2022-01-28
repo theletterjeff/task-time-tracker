@@ -161,6 +161,32 @@ class TaskDashboardViewTests(TestCase):
 
 class NewTaskViewTests(TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        """Create a user"""
+        super().setUpClass()
+
+        cls.credentials = {
+            'username': 'username',
+            'password': 'password',
+        }
+        cls.User = get_user_model()
+        cls.User.objects.create_user(**cls.credentials)
+    
+    @classmethod
+    def tearDownClass(cls):
+        """Delete the user"""
+        cls.User.objects.get(
+            username=cls.credentials['username']
+        ).delete()
+
+        super().tearDownClass()
+
+    def setUp(self):
+        """Log user in"""
+        super().setUp()
+        self.client.login(**self.credentials)
+
     def test_new_task_page_load(self):
         """
         Response status for create task page load is 200
