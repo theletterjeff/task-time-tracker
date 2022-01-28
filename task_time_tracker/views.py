@@ -97,6 +97,10 @@ class NewTaskView(LoginRequiredMixin, CreateView):
 
     extra_context = {'page_title': 'Create a New Task'}
 
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
     def get_success_url(self):
         return reverse('todays_tasks')
 

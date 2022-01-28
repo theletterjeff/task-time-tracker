@@ -3,6 +3,7 @@ from django.core.paginator import EmptyPage
 from django.test import TestCase
 from django.urls import reverse
 
+from task_time_tracker.models import Task
 from task_time_tracker.utils.test_helpers import create_task
 
 print('main view tests running')
@@ -246,6 +247,45 @@ class NewTaskViewTests(TestCase):
         self.assertEqual(
             tuple(response.context['form'].fields.keys()), fields
         )
+    
+    def test_post_data_to_url_creates_new_task(self):
+        """
+        Posting task_name and expected_mins data to the new_task
+        URL creates a new task
+        """
+        new_task_data = {
+            'task_name': 'test task',
+            'expected_mins': 10,
+        }
+        self.client.post(
+            reverse('new_task'),
+            data=new_task_data,
+        )
+        assert Task.objects.get(task_name='test task')
+    
+    def test_create_new_task_adds_user_to_task(self):
+        """
+        Creating a new task assigns the logged in user as the
+        foreign key 'user' on that task instance
+        """
+        # Check to make sure no other entries have carried over
+        self.assertEqual(len(Task.objects.all()), 0)
+
+        # Post a new task
+        new_task_data = {
+            'task_name': 'test task',
+            'expected_mins': 10,
+        }
+        self.client.post(
+            reverse('new_task'),
+            data=new_task_data,
+        )
+
+        # Get user (for equivalence testing)
+        User = get_user_model()
+        user = User.objects.get(username='username')
+
+        self.assertEqual(Task.objects.get(task_name='test task').user, user)
 
 class TodaysTasksViewTests(TestCase):
 
