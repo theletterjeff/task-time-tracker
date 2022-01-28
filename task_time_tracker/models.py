@@ -21,6 +21,8 @@ class TaskStatusChange(models.Model):
 
 class Task(models.Model):
 
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, default=1)
+
     # Text values
     task_name = models.CharField(max_length=60)
     task_category = models.TextField(blank=True)
@@ -104,6 +106,8 @@ class Task(models.Model):
         return reverse('delete_task', kwargs={'pk': self.id})
 
 class Project(models.Model):
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, default=1)
 
     # Text values
     name = models.CharField(max_length=60, unique=True)
