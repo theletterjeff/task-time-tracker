@@ -89,10 +89,6 @@ def task_detail(request, task_id):
     task_str = get_object_or_404(Task, pk=task_id)
     return HttpResponse(f'Detail page for {task_str}.')
 
-def index(request):
-    template = 'task_time_tracker/index.html'
-    return render(request, template)
-
 class NewTaskView(CreateView):
     model = Task
     form_class = NewTaskPageForm
