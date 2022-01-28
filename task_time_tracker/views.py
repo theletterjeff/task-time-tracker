@@ -3,6 +3,7 @@ import logging
 
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Sum
 from django.http import HttpResponse, HttpResponseRedirect
@@ -89,8 +90,7 @@ def task_detail(request, task_id):
     task_str = get_object_or_404(Task, pk=task_id)
     return HttpResponse(f'Detail page for {task_str}.')
 
-@login_required
-class NewTaskView(CreateView):
+class NewTaskView(LoginRequiredMixin, CreateView):
     model = Task
     form_class = NewTaskPageForm
     template_name = 'task_time_tracker/new-task.html'
@@ -100,8 +100,7 @@ class NewTaskView(CreateView):
     def get_success_url(self):
         return reverse('todays_tasks')
 
-@login_required
-class NewProjectView(CreateView):
+class NewProjectView(LoginRequiredMixin, CreateView):
     model = Project
     form_class = NewProjectForm
     template_name = 'task_time_tracker/new-project.html'
@@ -111,8 +110,7 @@ class NewProjectView(CreateView):
     def get_success_url(self):
         return reverse('todays_tasks')
 
-@login_required
-class EditTaskView(UpdateView):
+class EditTaskView(LoginRequiredMixin, UpdateView):
     model = Task
     form_class = EditTaskForm
     template_name = 'task_time_tracker/edit_task.html'
@@ -125,15 +123,13 @@ class EditTaskView(UpdateView):
         task.save()
         return redirect('todays_tasks')
 
-@login_required
-class DeleteTaskView(DeleteView):
+class DeleteTaskView(LoginRequiredMixin, DeleteView):
     model = Task
     success_url = reverse_lazy('dashboard')
     template_name = 'edit_task.html'
     context_object_name = 'task'
 
-@login_required
-class TodaysTaskView(SingleTableView):
+class TodaysTaskView(LoginRequiredMixin, SingleTableView):
     queryset = Task.objects.filter(active=True)
     queryset = queryset.order_by('completed', '-priority')
 
@@ -142,8 +138,7 @@ class TodaysTaskView(SingleTableView):
 
     extra_context = {'page_title': "Today's Tasks"}
 
-@login_required
-class InactiveTaskView(SingleTableView):
+class InactiveTaskView(LoginRequiredMixin, SingleTableView):
     queryset = Task.objects.filter(active=False).filter(completed=False)
     queryset = queryset.order_by('-created_date', '-priority')
 
