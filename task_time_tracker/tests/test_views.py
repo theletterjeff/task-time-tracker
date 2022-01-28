@@ -3,7 +3,7 @@ from django.core.paginator import EmptyPage
 from django.test import TestCase
 from django.urls import reverse
 
-from task_time_tracker.models import Task
+from task_time_tracker.models import Project, Task
 from task_time_tracker.utils.test_helpers import create_task
 
 print('main view tests running')
@@ -286,6 +286,119 @@ class NewTaskViewTests(TestCase):
         user = User.objects.get(username='username')
 
         self.assertEqual(Task.objects.get(task_name='test task').user, user)
+
+class NewProjectViewTests(TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        """Create a user"""
+        super().setUpClass()
+
+        cls.credentials = {
+            'username': 'username',
+            'password': 'password',
+        }
+        cls.User = get_user_model()
+        cls.User.objects.create_user(**cls.credentials)
+    
+    @classmethod
+    def tearDownClass(cls):
+        """Delete the user"""
+        cls.User.objects.get(
+            username=cls.credentials['username']
+        ).delete()
+
+        super().tearDownClass()
+
+    def setUp(self):
+        """Log user in"""
+        super().setUp()
+        self.client.login(**self.credentials)
+
+    def test_new_project_page_load(self):
+        """
+        Response status for create project page load is 200
+        """
+        response = self.client.get(reverse('new_project'))
+        self.assertEqual(response.status_code, 200)
+    
+    def test_new_project_page_loads_correct_form_fields(self):
+        """
+        Form should include:
+
+        - name (display as 'Name')
+        - description (display as 'Description')
+        - start_date (display as 'Start Date')
+        - end_date (display as 'End Date')
+        """
+        response = self.client.get(reverse('new_project'))
+        field_label_dict = {
+            'name': 'Name',
+            'description': 'Description',
+            'start_date': 'Start Date',
+            'end_date': 'End Date',
+        }
+        for field, label in field_label_dict.items():
+            # Fields are correct
+            self.assertIsNotNone(
+                field, response.context['form'].fields.get(field)
+            )
+            # Labels are correct
+            self.assertEqual(
+                label, response.context['form'].fields.get(field).label
+            )
+        
+    def test_new_project_page_loads_fields_in_right_order(self):
+        """
+        New project page form fields are in the order:
+        name, description, start_date, end_date
+        """
+        response = self.client.get(reverse('new_project'))
+        fields = (
+            'name',
+            'description',
+            'start_date',
+            'end_date',
+        )
+        self.assertEqual(
+            tuple(response.context['form'].fields.keys()), fields
+        )
+    
+    def test_post_data_to_url_creates_new_project(self):
+        """
+        Posting name data to the new_project URL creates a new project
+        """
+        new_project_data = {
+            'name': 'test project',
+        }
+        self.client.post(
+            reverse('new_project'),
+            data=new_project_data,
+        )
+        assert Project.objects.get(name='test project')
+    
+    def test_create_new_project_adds_user_to_project(self):
+        """
+        Creating a new task assigns the logged in user as the
+        foreign key 'user' on that task instance
+        """
+        # Check to make sure no other entries have carried over
+        self.assertEqual(len(Project.objects.all()), 0)
+
+        new_project_data = {
+            'name': 'test project',
+        }
+        self.client.post(
+            reverse('new_project'),
+            data=new_project_data,
+        )
+
+        # Get user (for equivalence testing)
+        User = get_user_model()
+        user = User.objects.get(username='username')
+
+        self.assertEqual(Project.objects.get(name='test project').user, user)
+
 
 class TodaysTasksViewTests(TestCase):
 
