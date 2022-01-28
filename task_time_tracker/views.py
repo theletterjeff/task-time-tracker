@@ -89,6 +89,7 @@ def task_detail(request, task_id):
     task_str = get_object_or_404(Task, pk=task_id)
     return HttpResponse(f'Detail page for {task_str}.')
 
+@login_required
 class NewTaskView(CreateView):
     model = Task
     form_class = NewTaskPageForm
@@ -99,6 +100,7 @@ class NewTaskView(CreateView):
     def get_success_url(self):
         return reverse('todays_tasks')
 
+@login_required
 class NewProjectView(CreateView):
     model = Project
     form_class = NewProjectForm
@@ -109,6 +111,7 @@ class NewProjectView(CreateView):
     def get_success_url(self):
         return reverse('todays_tasks')
 
+@login_required
 class EditTaskView(UpdateView):
     model = Task
     form_class = EditTaskForm
@@ -122,12 +125,14 @@ class EditTaskView(UpdateView):
         task.save()
         return redirect('todays_tasks')
 
+@login_required
 class DeleteTaskView(DeleteView):
     model = Task
     success_url = reverse_lazy('dashboard')
     template_name = 'edit_task.html'
     context_object_name = 'task'
 
+@login_required
 class TodaysTaskView(SingleTableView):
     queryset = Task.objects.filter(active=True)
     queryset = queryset.order_by('completed', '-priority')
@@ -137,6 +142,7 @@ class TodaysTaskView(SingleTableView):
 
     extra_context = {'page_title': "Today's Tasks"}
 
+@login_required
 class InactiveTaskView(SingleTableView):
     queryset = Task.objects.filter(active=False).filter(completed=False)
     queryset = queryset.order_by('-created_date', '-priority')
