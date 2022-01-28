@@ -249,6 +249,32 @@ class TodaysTasksViewTests(TestCase):
 
 class InactiveTasksViewTests(TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        """Create a user"""
+        super().setUpClass()
+
+        cls.credentials = {
+            'username': 'username',
+            'password': 'password',
+        }
+        cls.User = get_user_model()
+        cls.User.objects.create_user(**cls.credentials)
+    
+    @classmethod
+    def tearDownClass(cls):
+        """Delete the user"""
+        cls.User.objects.get(
+            username=cls.credentials['username']
+        ).delete()
+
+        super().tearDownClass()
+
+    def setUp(self):
+        """Log user in"""
+        super().setUp()
+        self.client.login(**self.credentials)
+
     def test_context_filled_w_inactive_incomplete_tasks(self):
         """
         View contains inactive, incomplete tasks and excludes inactive tasks.
