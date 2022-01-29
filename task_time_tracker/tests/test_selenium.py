@@ -88,10 +88,15 @@ class SeleniumTests(StaticLiveServerTestCase):
         Clicking on "Task name" column sorts data alphabetically.
         Clicking on it again sorts data reverse alphabetically.
         """
-        create_task(task_name='task_2')
-        create_task(task_name='task_4')
-        create_task(task_name='task_1')
-        create_task(task_name='task_3')
+        # Get user (to assign to tasks)
+        self.assertEqual(len(User.objects.all()), 1)
+        user = User.objects.get()
+
+        # Create tasks
+        create_task(task_name='task_2', user=user)
+        create_task(task_name='task_4', user=user)
+        create_task(task_name='task_1', user=user)
+        create_task(task_name='task_3', user=user)
 
         self.driver.get('%s%s' % (self.live_server_url, reverse('dashboard')))
         task_name_header = self.driver.find_element_by_link_text('Task name')

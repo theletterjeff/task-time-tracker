@@ -59,9 +59,15 @@ class TaskDashboardViewTests(TestCase):
         self.assertEqual(response.context['unfinished_time'], '0 mins')
     
     def test_inactive_task_summ_stats_show_zero(self):
-        """If there are no active tasks, the summary stats display as '0 mins'"""
-        # Create an inactive task
-        create_task(active=False)
+        """
+        If there are no active tasks, the summary stats display as '0 mins'
+        """
+        # Get user, check they're logged in
+        self.assertEqual(len(self.User.objects.all()), 1)
+        user = self.User.objects.get()
+        assert user.is_authenticated
+
+        create_task(active=False, user=user)
 
         response = self.client.get(reverse('dashboard'))
 
@@ -77,7 +83,12 @@ class TaskDashboardViewTests(TestCase):
             - Actual time is equal to '0 mins',
             - Time remaining is equal to the task's estimated time
         """
-        create_task()
+        # Get user, check they're logged in
+        self.assertEqual(len(self.User.objects.all()), 1)
+        user = self.User.objects.get()
+        assert user.is_authenticated
+
+        create_task(user=user)
         response = self.client.get(reverse('dashboard'))
 
         self.assertEqual(response.context['initial_estimated_time'], '1 min')
@@ -91,9 +102,14 @@ class TaskDashboardViewTests(TestCase):
         where actual_mins is less than expected_mins plus actual_mins
         where actual_mins is greater than expected_mins
         """
-        create_task(expected_mins=10, actual_mins=None) # 10
-        create_task(expected_mins=10, actual_mins=5) # 10
-        create_task(expected_mins=10, actual_mins=15) # 15
+        # Get user, check they're logged in
+        self.assertEqual(len(self.User.objects.all()), 1)
+        user = self.User.objects.get()
+        assert user.is_authenticated
+
+        create_task(expected_mins=10, actual_mins=None, user=user) # 10
+        create_task(expected_mins=10, actual_mins=5, user=user) # 10
+        create_task(expected_mins=10, actual_mins=15, user=user) # 15
 
         response = self.client.get(reverse('dashboard'))
 
@@ -106,9 +122,14 @@ class TaskDashboardViewTests(TestCase):
         For now, I'm going to simply test to see if the page is
         still valid when it has 'page=2' in the URL.
         """
+        # Get user, check they're logged in
+        self.assertEqual(len(self.User.objects.all()), 1)
+        user = self.User.objects.get()
+        assert user.is_authenticated
+
         # Create 6 tasks, which should not paginate the table
         for i in range(6):
-            create_task()
+            create_task(user=user)
         dashboard_url = reverse('dashboard')
         paginate_url = f'{dashboard_url}?page=2'
 
@@ -120,7 +141,7 @@ class TaskDashboardViewTests(TestCase):
         self.assertEqual(response, 'empty page')
 
         # Create a 7th task, which should paginate the table
-        create_task()
+        create_task(user=user)
         response = self.client.get(paginate_url)
         self.assertEqual(response.status_code, 200)
     
@@ -128,9 +149,14 @@ class TaskDashboardViewTests(TestCase):
         """
         Adding time spent and time remaining equals current time estimate.
         """
-        create_task(expected_mins=10)
-        create_task(expected_mins=10, actual_mins=5)
-        create_task(expected_mins=10, actual_mins=15)
+        # Get user, check they're logged in
+        self.assertEqual(len(self.User.objects.all()), 1)
+        user = self.User.objects.get()
+        assert user.is_authenticated
+
+        create_task(expected_mins=10, user=user)
+        create_task(expected_mins=10, actual_mins=5, user=user)
+        create_task(expected_mins=10, actual_mins=15, user=user)
 
         response = self.client.get(reverse('dashboard'))
 
