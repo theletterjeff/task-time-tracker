@@ -140,7 +140,7 @@ class TaskDashboardViewTests(TestCase):
             35
         )
     
-    def test_create_new_task_form_fields(self):
+    def test_form_fields_on_create_new_task_form(self):
         """
         new_task_form's fields property is equal to
         ['task_name', 'task_category', 'task_notes',
