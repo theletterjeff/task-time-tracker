@@ -155,13 +155,23 @@ class TodaysTaskView(LoginRequiredMixin, SingleTableView):
             )
 
 class InactiveTaskView(LoginRequiredMixin, SingleTableView):
-    queryset = Task.objects.filter(active=False).filter(completed=False)
-    queryset = queryset.order_by('-created_date', '-priority')
-
     template_name = 'task_time_tracker/todays-tasks.html'
     table_class = AllTaskTable
 
     extra_context = {'page_title': 'Inactive Tasks'}
+
+    def get_queryset(self):
+        """Only show tasks created by logged-in user"""
+        return Task.objects.filter(
+                user=self.request.user
+            ).filter(
+                active=False
+            ).filter(
+                completed=False
+            ).order_by(
+                '-created_date',
+                '-priority'
+            )
 
 # Authentication Views
 

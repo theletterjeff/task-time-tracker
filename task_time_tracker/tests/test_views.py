@@ -537,10 +537,27 @@ class InactiveTasksViewTests(TestCase):
         """
         View contains inactive, incomplete tasks and excludes inactive tasks.
         """
-        create_task(task_name='task_1', active=True, completed=False)
-        create_task(task_name='task_2', active=True, completed=True)
-        create_task(task_name='task_3', active=False, completed=False)
-        create_task(task_name='task_4', active=False, completed=True)
+        # Get user
+        self.assertEqual(len(self.User.objects.all()), 1)
+        user = self.User.objects.get()
+
+        # Set kwargs
+        task_names = [f'task_{i}' for i in range(1, 5)]
+        active_statuses = [True, True, False, False]
+        completed_statuses = [False, True, False, True]
+
+        data = list(zip(task_names, active_statuses, completed_statuses))
+        param_names = ['task_name', 'active', 'completed']
+
+        for i in range(4):
+
+            # Zip a particular set up kwargs up with kwarg names
+            kwargs = dict(zip(param_names, data[i]))
+
+            # Add user to kwargs
+            kwargs['user'] = user
+
+            create_task(**kwargs)
 
         response = self.client.get(reverse('inactive_tasks'))
         context_queryset = response.context['task_list']
@@ -557,3 +574,35 @@ class InactiveTasksViewTests(TestCase):
         self.assertTrue('task_2' not in task_names)
         self.assertTrue('task_4' not in task_names)
 
+    def test_inactive_tasks_only_includes_tasks_from_logged_in_users(self):
+        """
+        The queryset for the inactive task view does not
+        include tasks from a user who is not logged in
+        """
+        # Get old user
+        self.assertEqual(len(self.User.objects.all()), 1)
+        user_1 = self.User.objects.get()
+
+        # Create new user
+        user_2 = self.User.objects.create(username='username_2')
+        user_2.set_password('password_2')
+        user_2.save()
+
+        # Create a task for old and new user
+        create_task(task_name='user1_task', active=False, user=user_1)
+        create_task(task_name='user2_task', active=False, user=user_2)
+
+        # Log out old user; log in new user
+        self.client.logout()
+        self.client.login(username='username_2', password='password_2')
+
+        # Get queryset
+        response = self.client.get(reverse('inactive_tasks'))
+        context_queryset = response.context['task_list']
+
+        self.assertEqual(len(context_queryset), 1)
+
+        task_names = [task.task_name for task in context_queryset]
+
+        self.assertTrue('user2_task' in task_names)
+        self.assertFalse('user1_task' in task_names)
