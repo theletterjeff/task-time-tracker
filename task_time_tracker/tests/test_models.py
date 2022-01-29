@@ -175,45 +175,61 @@ class TaskStatusChangeModelTests(TestCase):
 class UserModelTests(TestCase):
 
     @classmethod
-    def setUpClass(cls) -> None:
-        User = get_user_model()
-        cls.user = User.objects.create_user(
-            username='usermodelusername',
-            password='usermodelpassword'
-        )
-        return super().setUpClass()
+    def setUpClass(cls):
+        """Create a user"""
+        super().setUpClass()
+
+        cls.credentials = {
+            'username': 'username',
+            'password': 'password',
+        }
+        cls.User = get_user_model()
+        cls.User.objects.create_user(**cls.credentials)
+    
+    @classmethod
+    def tearDownClass(cls):
+        """Delete the user"""
+        cls.User.objects.get(
+            username=cls.credentials['username']
+        ).delete()
+
+        super().tearDownClass()
+
+    def setUp(self):
+        """Log user in"""
+        super().setUp()
+        self.client.login(**self.credentials)
 
 
     def test_user_default_is_active(self):
         """Newly created users' is_active property is True by default"""
-        self.assertTrue(self.user.is_active)
+        user = self.User.objects.get()
+        self.assertTrue(user.is_active)
     
     def test_create_user_defaults_nonstaff_nonsuperuser(self):
-        self.assertFalse(self.user.is_staff)
-        self.assertFalse(self.user.is_superuser)
+        user = self.User.objects.get()
+        self.assertFalse(user.is_staff)
+        self.assertFalse(user.is_superuser)
 
     def test_create_user_no_username_errors(self):
-        User = get_user_model()
         with self.assertRaises(TypeError):
-            User.objects.create_user()
+            self.User.objects.create_user()
         with self.assertRaises(ValueError):
-            User.objects.create_user(username='')
+            self.User.objects.create_user(username='')
         with self.assertRaises(ValueError):
-            User.objects.create_user(username='', password='bar')
+            self.User.objects.create_user(username='', password='bar')
     
     def test_create_duplicate_user(self):
         """
         Creating a user with the same username as another one
         in the database raises an IntegrityError
         """
-        User = get_user_model()
         with self.assertRaises(IntegrityError):
-            # We already created user 'foo' in setUpClas
-            User.objects.create_user(username='usermodelusername', password='thisisapassword1234')
+            # We already created user 'username' in setUpClas
+            self.User.objects.create_user(**self.credentials)
 
     def test_create_superuser(self):
-        User = get_user_model()
-        admin_user = User.objects.create_superuser(
+        admin_user = self.User.objects.create_superuser(
             username='admin_username',
             password='admin_password'
         )
@@ -227,9 +243,8 @@ class UserModelTests(TestCase):
         Creating a superuser with parameter is_superuser set to False
         throws a ValueError
         """
-        User = get_user_model()
         with self.assertRaises(ValueError):
-            User.objects.create_superuser(
+            self.User.objects.create_superuser(
                 username='another_admin_username',
                 password='another_admin_password',
                 is_superuser=False
