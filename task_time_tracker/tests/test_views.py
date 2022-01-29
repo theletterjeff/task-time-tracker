@@ -171,21 +171,24 @@ class NewTaskViewTests(TestCase):
             'username': 'username',
             'password': 'password',
         }
-        cls.User = get_user_model()
-        cls.User.objects.create_user(**cls.credentials)
+
+        User = get_user_model()
+        user = User.objects.create_user(
+            username=cls.credentials['username'])
+        user.set_password(cls.credentials['password'])
+        user.save()
     
     @classmethod
     def tearDownClass(cls):
         """Delete the user"""
-        cls.User.objects.get(
-            username=cls.credentials['username']
-        ).delete()
+        User = get_user_model()
+        User.objects.get(username='username').delete()
 
         super().tearDownClass()
 
     def setUp(self):
         """Log user in"""
-        super().setUp()
+        super(NewTaskViewTests, self).setUp()
         self.client.login(**self.credentials)
 
     def test_new_task_page_load(self):
@@ -399,7 +402,6 @@ class NewProjectViewTests(TestCase):
 
         self.assertEqual(Project.objects.get(name='test project').user, user)
 
-
 class TodaysTasksViewTests(TestCase):
 
     @classmethod
@@ -432,10 +434,27 @@ class TodaysTasksViewTests(TestCase):
         """
         View contains active tasks and excludes inactive tasks.
         """
-        create_task(task_name='task_1', active=True, completed=False)
-        create_task(task_name='task_2', active=True, completed=True)
-        create_task(task_name='task_3', active=False, completed=False)
-        create_task(task_name='task_4', active=False, completed=True)
+        # Get user
+        self.assertEqual(len(self.User.objects.all()), 1)
+        user = self.User.objects.get()
+
+        # Set kwargs
+        task_names = [f'task_{i}' for i in range(1, 5)]
+        active_statuses = [True, True, False, False]
+        completed_statuses = [False, True, False, True]
+
+        data = list(zip(task_names, active_statuses, completed_statuses))
+        param_names = ['task_name', 'active', 'completed']
+
+        for i in range(4):
+
+            # Zip a particular set up kwargs up with kwarg names
+            kwargs = dict(zip(param_names, data[i]))
+
+            # Add user to kwargs
+            kwargs['user'] = user
+
+            create_task(**kwargs)
 
         response = self.client.get(reverse('todays_tasks'))
         context_queryset = response.context['task_list']
@@ -451,6 +470,40 @@ class TodaysTasksViewTests(TestCase):
         # Excludes inactive tasks
         self.assertTrue('task_3' not in task_names)
         self.assertTrue('task_4' not in task_names)
+    
+    def test_todays_tasks_only_includes_tasks_from_logged_in_users(self):
+        """
+        The queryset for the today's task view does not
+        include tasks from a user who is not logged in
+        """
+        # Get old user
+        self.assertEqual(len(self.User.objects.all()), 1)
+        user_1 = self.User.objects.get()
+
+        # Create new user
+        user_2 = self.User.objects.create(username='username_2')
+        user_2.set_password('password_2')
+        user_2.save()
+
+        # Create a task for old and new user
+        create_task(task_name='user1_task', user=user_1)
+        create_task(task_name='user2_task', user=user_2)
+
+        # Log out old user; log in new user
+        self.client.logout()
+        self.client.login(username='username_2', password='password_2')
+
+        # Get queryset
+        response = self.client.get(reverse('todays_tasks'))
+        context_queryset = response.context['task_list']
+
+        self.assertEqual(len(context_queryset), 1)
+
+        task_names = [task.task_name for task in context_queryset]
+
+        self.assertTrue('user2_task' in task_names)
+        self.assertFalse('user1_task' in task_names)
+
 
 class InactiveTasksViewTests(TestCase):
 

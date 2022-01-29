@@ -138,13 +138,21 @@ class DeleteTaskView(LoginRequiredMixin, DeleteView):
     context_object_name = 'task'
 
 class TodaysTaskView(LoginRequiredMixin, SingleTableView):
-    queryset = Task.objects.filter(active=True)
-    queryset = queryset.order_by('completed', '-priority')
-
     template_name = 'task_time_tracker/todays-tasks.html'
     table_class = AllTaskTable
 
     extra_context = {'page_title': "Today's Tasks"}
+
+    def get_queryset(self):
+        """Only show tasks created by logged-in user"""
+        return Task.objects.filter(
+                user=self.request.user
+            ).filter(
+                active=True
+            ).order_by(
+                'completed',
+                '-priority'
+            )
 
 class InactiveTaskView(LoginRequiredMixin, SingleTableView):
     queryset = Task.objects.filter(active=False).filter(completed=False)
