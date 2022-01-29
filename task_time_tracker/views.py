@@ -41,7 +41,8 @@ def dashboard(request):
     page_title = 'Dashboard'
 
     # Read in task data, format table
-    active_tasks = Task.objects.filter(active=True)
+    user_tasks = Task.objects.filter(user=request.user)
+    active_tasks = user_tasks.filter(active=True)
     active_tasks = active_tasks.order_by('completed', '-expected_mins')
     active_task_table = ActiveTaskTable(active_tasks, request=request)
     active_task_table.paginate(
