@@ -8,5 +8,6 @@ def deactivate_old_tasks():
     at midnight every day."""
     Task.objects.filter(
         active=True,
+        completed=True,
         created_date__date__lt=datetime.date.today(),
     ).update(active=False)
