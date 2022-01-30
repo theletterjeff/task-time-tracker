@@ -1,3 +1,4 @@
+import logging
 from time import sleep
 
 from django.contrib.auth import get_user_model, get_user
@@ -17,6 +18,10 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from task_time_tracker.models import Task, Project, User
 from task_time_tracker.utils.test_helpers import create_task
+
+logger = logging.getLogger(__name__)
+
+logging.basicConfig(level=logging.INFO)
 
 class SeleniumTests(StaticLiveServerTestCase):
 
