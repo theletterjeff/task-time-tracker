@@ -19,10 +19,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from task_time_tracker.models import Task, Project, User
 from task_time_tracker.utils.test_helpers import create_task
 
-logger = logging.getLogger(__name__)
-
-logging.basicConfig(level=logging.INFO)
-
 class SeleniumTests(StaticLiveServerTestCase):
 
     @classmethod
@@ -369,3 +365,67 @@ class SeleniumTests(StaticLiveServerTestCase):
 
         # Clean up--delete user
         user.delete()
+    
+    ### CSS tests ###
+    
+    ### Base layout ###
+
+    def test_wrapper_div_styles(self):
+        """
+        CSS styles to test:
+
+        #wrapper {
+            display: flex;
+            box-sizing: border-box;
+        }
+        """
+
+        # Load dashboard (includes base layout styling)
+        self.driver.get('%s%s' % (self.live_server_url, reverse('dashboard')))
+
+        # Wait for widget title to appear, then assign it
+        wrapper_div = self.driver.find_element_by_id('wrapper')
+        assert wrapper_div
+
+        self.assertEqual(
+            wrapper_div.value_of_css_property('display'),
+            'flex'
+        )
+        self.assertEqual(
+            wrapper_div.value_of_css_property('box-sizing'),
+            'border-box'
+        )
+    
+    def test_content_wrapper_div_styles(self):
+        """
+        CSS styles to test:
+
+        #content-wrapper {
+            background-color: rgb(248, 249, 252);
+            width: 100%;
+            overflow-x: hidden;
+            flex-direction: column;
+            display: flex;
+            box-sizing: border-box;
+        }
+        """
+        # Load dashboard (includes base layout styling)
+        self.driver.get('%s%s' % (self.live_server_url, reverse('dashboard')))
+
+        # Wait for widget title to appear, then assign it
+        content_wrapper_div = self.driver.find_element_by_id('content-wrapper')
+        assert content_wrapper_div
+
+        css_properties = {
+            'background-color': 'rgb(248, 249, 252)',
+            'overflow-x': 'hidden',
+            'flex-direction': 'column',
+            'display': 'flex',
+            'box-sizing': 'border-box',
+        }
+
+        for property, value in css_properties.items():
+            self.assertEqual(
+                content_wrapper_div.value_of_css_property(property),
+                value
+            )
