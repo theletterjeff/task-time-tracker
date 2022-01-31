@@ -429,3 +429,48 @@ class SeleniumTests(StaticLiveServerTestCase):
                 content_wrapper_div.value_of_css_property(property),
                 value
             )
+    
+    def test_side_navbar_div_styles(self):
+        """
+        Test the div with id "side-navbar".
+        CSS styles to test:
+
+        #side-navbar {
+            background-color: rgb(55, 128, 55);
+            background-image: linear-gradient(rgb(55, 128, 55) 10%, rgb(89, 177, 89) 100%);
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            padding-left: 0px;
+            margin-botton: 0px;
+            list-style: none;
+        }
+
+        At present, not sure how to test the element types (ul etc.)
+        that have side-navbar as their parent div.
+
+        """
+
+        # Load dashboard (includes base layout styling)
+        self.driver.get('%s%s' % (self.live_server_url, reverse('dashboard')))
+
+        # Wait for widget title to appear, then assign it
+        side_navbar_div = self.driver.find_element_by_id('side-navbar')
+        assert side_navbar_div
+
+        css_properties = {
+            'background-color': 'rgb(55, 128, 55)',
+            'background-image': 'linear-gradient(rgb(55, 128, 55) 10%, rgb(89, 177, 89) 100%)',
+            'background-size': 'cover',
+            'display': 'flex',
+            'flex-direction': 'column',
+            'padding-left': '0px',
+            'list-style': 'none',
+        }
+        
+        for property, value in css_properties.items():
+            self.assertEqual(
+                side_navbar_div.value_of_css_property(property),
+                value,
+                msg=property,
+            )
