@@ -133,12 +133,8 @@ class TaskDashboardViewTests(TestCase):
         dashboard_url = reverse('dashboard')
         paginate_url = f'{dashboard_url}?page=2'
 
-        try:
-            response = self.client.get(paginate_url)
-        except EmptyPage:
-            response = 'empty page'
-
-        self.assertEqual(response, 'empty page')
+        with self.assertRaises(EmptyPage):
+            self.client.get(paginate_url)
 
         # Create a 7th task, which should paginate the table
         create_task(user=user)
