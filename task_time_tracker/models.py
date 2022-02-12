@@ -21,7 +21,7 @@ class TaskStatusChange(models.Model):
 
 class Task(models.Model):
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
 
     # Text values
     task_name = models.CharField(max_length=60)
@@ -106,7 +106,7 @@ class Task(models.Model):
 
 class Project(models.Model):
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
 
     # Text values
     name = models.CharField(max_length=60, unique=True)
