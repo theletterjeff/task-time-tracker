@@ -181,6 +181,31 @@ class TaskDashboardViewTests(TestCase):
         form_fields = [field for field in form_obj.fields.keys()]
         
         self.assertEqual(form_fields, included_fields)
+    
+    def test_new_task_form_creates_task_for_logged_in_user(self):
+        """
+        Creating a new task with the dashboard page's new task form
+        creates a new task for the logged in user.
+        """
+        # Check to make sure no other entries have carried over
+        self.assertEqual(len(Task.objects.all()), 0)
+
+        # Post a new task
+        new_task_data = {
+            'task_name': 'test task',
+            'expected_mins': 10,
+        }
+        self.client.post(
+            reverse('dashboard'),
+            data=new_task_data,
+        )
+
+        # Get user (for equivalence testing)
+        User = get_user_model()
+        user = User.objects.get(username='username')
+        
+        self.assertEqual(Task.objects.get(task_name='test task').user, user)
+
 
 class NewTaskViewTests(TestCase):
 

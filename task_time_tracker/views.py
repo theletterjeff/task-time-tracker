@@ -53,6 +53,7 @@ def dashboard(request):
     # New task form
     if request.method == 'POST':
         new_task_form = NewTaskForm(data=request.POST)
+        new_task_form.instance.user = request.user
         if new_task_form.is_valid():
             new_task_form.save()
             reload_url = reverse('dashboard')
