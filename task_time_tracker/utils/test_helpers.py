@@ -5,13 +5,32 @@ from lorem import get_word
 
 from task_time_tracker.models import Task, Project, User
 
+def create_user(username='username',
+                password='testpassword',
+                **kwargs):
+    """Create a dummy user"""
+    user = User.objects.create(username=username)
+    user.set_password(password)
+    user.save()
+
+def get_user(user):
+    """
+    Return user if user is already created.
+    If user is not already created, create and return user.
+    """
+    if user is None:
+        if not User.objects.all():
+            create_user()
+        user = User.objects.get()
+    
+    return user
+
 def create_task(task_name=get_word(count=2),
                 expected_mins=1,
                 user=None,
                 **kwargs):
     """Create a dummy task"""
-    if user is None:
-        user = User.objects.get()
+    user = get_user(user)
 
     return Task.objects.create(
         task_name=task_name,
@@ -21,9 +40,13 @@ def create_task(task_name=get_word(count=2),
     )
 
 def create_project(name=get_word(count=2),
+                   user=None,
                    **kwargs):
     """Create a dummy project"""
+    user = get_user(user)
+    
     return Project.objects.create(name=name,
+                                  user=user,
                                   **kwargs)
 
 def get_mocked_datetime():
