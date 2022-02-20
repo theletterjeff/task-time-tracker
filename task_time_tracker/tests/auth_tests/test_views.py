@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model, get_user
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core import mail
-from django.test import TestCase
+from django.test import tag, TestCase
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -123,6 +123,7 @@ class PasswordResetViewTests(TestCase):
         )
         self.assertEqual(len(mail.outbox), 0)
     
+    @tag('in_progress')
     def test_pw_reset_correct_subject_line(self):
         """
         Password reset email's subject line is

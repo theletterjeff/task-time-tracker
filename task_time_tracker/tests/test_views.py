@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model, get_user
 from django.core.paginator import EmptyPage
-from django.test import TestCase
+from django.test import tag, TestCase
 from django.urls import reverse
 
 from task_time_tracker.models import Project, Task
@@ -372,6 +372,7 @@ class NewProjectViewTests(TestCase):
         response = self.client.get(reverse('new_project'))
         self.assertEqual(response.status_code, 200)
     
+    @tag('in_progress')
     def test_new_project_page_loads_correct_form_fields(self):
         """
         Form should include:
