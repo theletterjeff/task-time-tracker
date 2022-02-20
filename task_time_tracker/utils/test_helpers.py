@@ -3,15 +3,20 @@ import pytz
 
 from lorem import get_word
 
-from task_time_tracker.models import Task, Project
+from task_time_tracker.models import Task, Project, User
 
 def create_task(task_name=get_word(count=2),
                 expected_mins=1,
+                user=None,
                 **kwargs):
     """Create a dummy task"""
+    if user is None:
+        user = User.objects.get()
+
     return Task.objects.create(
         task_name=task_name,
         expected_mins=expected_mins,
+        user=user,
         **kwargs,
     )
 
