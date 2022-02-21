@@ -1,8 +1,6 @@
 import os
 from pathlib import Path
 
-import django_heroku
-
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -120,7 +118,6 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -138,6 +135,3 @@ DJANGO_TABLES2_TEMPLATE = 'django_tables2/bootstrap4.html'
 
 # Email backend for development. Have to replace for production
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-# Activate django-heroku
-django_heroku.settings(locals())
