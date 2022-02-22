@@ -1,2 +1,2 @@
-web: py server.py
-worker: py manage.py qcluster
+web: python server.py
+worker: python manage.py qcluster
