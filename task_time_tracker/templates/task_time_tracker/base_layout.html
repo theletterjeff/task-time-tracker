@@ -107,9 +107,9 @@
                             </p>
                         {% else %}
                             <p class='login-logout-signup'>
-                                <span class='top-right-content'><p id='login'><a href="{% url 'login' %}?next={{request.path}}">Log In</a></p></span>
+                                <span class='top-right-content'><a id='login' href="{% url 'login' %}?next={{request.path}}">Log In</a></span>
                                 <span class='top-right-content'>|</span>
-                                <span class='top-right-content'><p id='signup'><a href="{% url 'signup' %}">Sign Up</a></p></span>
+                                <span class='top-right-content'><a id='signup' href="{% url 'signup' %}">Sign Up</a></span>
                             </p>
                         {% endif %}
                     </div>
