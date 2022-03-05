@@ -1,6 +1,6 @@
 import os
-from pathlib import Path
 
+import dj_database_url
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -8,7 +8,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
 ALLOWED_HOSTS = [
@@ -20,6 +19,7 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
+    'whitenoise.runserver_nostatic',
     'task_time_tracker.apps.TimeTrackerConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -78,6 +78,9 @@ DATABASES = {
     }
 }
 
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
+
 AUTH_USER_MODEL = 'task_time_tracker.User'
 
 LOGIN_REDIRECT_URL = '/todays-tasks/'
@@ -113,10 +116,8 @@ USE_TZ = True
 
 # Static files settings
 STATIC_URL = '/static/'
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, 'static'),
-# ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+WHITENOISE_USE_FINDERS = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
