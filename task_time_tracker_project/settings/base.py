@@ -1,6 +1,5 @@
 import os
 
-import dj_database_url
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -8,18 +7,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
-DEBUG = False
-
-ALLOWED_HOSTS = [
-    'task-time-tracker.herokuapp.com',
-    '127.0.0.1',
-]
-
-
 # Application definition
 
 INSTALLED_APPS = [
-    'whitenoise.runserver_nostatic',
     'task_time_tracker.apps.TimeTrackerConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -34,7 +24,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -63,10 +52,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'task_time_tracker_project.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -78,16 +63,10 @@ DATABASES = {
     }
 }
 
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
-
 AUTH_USER_MODEL = 'task_time_tracker.User'
 
 LOGIN_REDIRECT_URL = '/todays-tasks/'
 LOGIN_URL = '/login/'
-
-# Password validation
-# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
