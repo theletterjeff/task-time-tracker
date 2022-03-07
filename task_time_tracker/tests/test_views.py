@@ -1,10 +1,15 @@
+import datetime
+from venv import create
+
 from django.contrib.auth import get_user_model, get_user
 from django.core.paginator import EmptyPage
-from django.test import tag, TestCase
+from django.test import tag, TestCase, RequestFactory
 from django.urls import reverse
+from django.utils import timezone
 
-from task_time_tracker.models import Project, Task
+from task_time_tracker.models import Project, Task, TaskStatusChange
 from task_time_tracker.utils.test_helpers import create_task
+import task_time_tracker.views as views
 
 print('main view tests running')
 
@@ -205,7 +210,51 @@ class TaskDashboardViewTests(TestCase):
         user = User.objects.get(username='username')
         
         self.assertEqual(Task.objects.get(task_name='test task').user, user)
+    
+    def test_get_todays_tasks_function_returns_correct_queryset(self):
+        """
+        The function `get_todays_tasks` from the views module
+        returns active incomplete tasks regardless of creation date
+        and active completed tasks if they were completed today
+        (excluding those completed before today)
+        """
+        yesterday = timezone.now() - timezone.timedelta(days=1)
 
+        task1 = create_task(active=True, completed=False)
+        task2 = create_task(active=True, completed=False, created_date=yesterday)
+        task3 = create_task(active=True, completed=True)
+        task4 = create_task(active=True, completed=True)
+        task5 = create_task(active=False, completed=False)
+        task6 = create_task(active=False, completed=True)
+
+        task3_status = TaskStatusChange.objects.create(
+            task=task3,
+            completed_datetime=timezone.now(),
+        )
+        task4_status = TaskStatusChange.objects.create(
+            task=task4,
+            completed_datetime=yesterday,
+        )
+
+        request_factory = RequestFactory()
+        request = request_factory.get(reverse('dashboard'))
+        request.user = self.User.objects.get()
+        
+        queryset = views.get_todays_tasks(request)
+
+        # Include active tasks (incomplete & completed today)
+        # irrespective of creation date
+        self.assertIn(task1, queryset)
+        self.assertIn(task2, queryset)
+        self.assertIn(task3, queryset)
+
+        # Exclude task that was completed before today
+        self.assertNotIn(task4, queryset)
+
+        # Exclude inactive tasks
+        self.assertNotIn(task5, queryset)
+        self.assertNotIn(task6, queryset)
+        
 
 class NewTaskViewTests(TestCase):
 

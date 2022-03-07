@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import date
 import logging
 
 from django.contrib.auth import views as auth_views
@@ -10,6 +10,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 from django.views import View
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
@@ -28,6 +29,19 @@ from .utils.model_helpers import DashboardSummStats, format_time
 
 logger = logging.getLogger(__name__)
 
+def get_todays_tasks(request):
+    """
+    Return active incomplete and complete tasks, excluding tasks that were
+    completed before today.
+    """
+    return Task.objects.filter(
+        user=request.user
+    ).filter(
+        active=True
+    ).exclude(
+        taskstatuschange__completed_datetime__date__lt=timezone.now().date()
+    )
+
 @login_required
 def dashboard(request):
     """Dashboard page for the time tracker.
@@ -41,9 +55,7 @@ def dashboard(request):
     page_title = 'Dashboard'
 
     # Read in task data, format table
-    user_tasks = Task.objects.filter(user=request.user)
-    active_tasks = user_tasks.filter(active=True)
-    active_tasks = active_tasks.order_by('completed', '-expected_mins')
+    active_tasks = get_todays_tasks(request).order_by('completed', '-expected_mins')
     active_task_table = ActiveTaskTable(active_tasks, request=request)
     active_task_table.paginate(
         page=request.GET.get('page', 1),
@@ -147,14 +159,10 @@ class TodaysTaskView(LoginRequiredMixin, SingleTableView):
 
     def get_queryset(self):
         """Only show tasks created by logged-in user"""
-        return Task.objects.filter(
-                user=self.request.user
-            ).filter(
-                active=True
-            ).order_by(
-                'completed',
-                '-priority'
-            )
+        return get_todays_tasks(self.request).order_by(
+            'completed',
+            '-priority',
+        )
 
 class InactiveTaskView(LoginRequiredMixin, SingleTableView):
     template_name = 'task_time_tracker/todays-tasks.html'
