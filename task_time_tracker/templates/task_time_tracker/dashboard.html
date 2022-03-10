@@ -6,47 +6,6 @@
 
 {% block content %}
 
-    <!-- Top line: new tasks & active tasks -->
-    <div class="row">
-
-        <!-- Active task table -->
-
-        <div class="col-xl-8 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-lg font-weight-bold text-primary text-uppercase mb-1 card-title"><a href="{% url 'todays_tasks' %}" id="todays-task-widget-title">TODAY'S TASKS</a></div>
-                        </div>
-                        <div>
-                            {% render_table active_task_table %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Create a new task-->
-        <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-lg font-weight-bold text-primary text-uppercase mb-1 card-title">NEW TASK</div>
-                        </div>
-                        <div>
-                            <form method="post"}>
-                                {{ new_task_form | crispy }}
-                                {% csrf_token %}
-                                <button class="btn btn-primary">Create Task</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Second row: summary stats -->
 
     <div class="row">
@@ -87,13 +46,52 @@
                                 <div class='sum-stat-title'>Time Remaining</div>
                                 <div class='sum-stat-num'>{{ unfinished_time }}</div>
                             </div>
-                                    
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Top line: new tasks & active tasks -->
+    <div class="row">
+
+        <!-- Active task table -->
+
+        <div class="col-xl-8 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-lg font-weight-bold text-primary text-uppercase mb-1 card-title"><a href="{% url 'todays_tasks' %}" id="todays-task-widget-title">TODAY'S TASKS</a></div>
+                        </div>
+                        <div>
+                            {% render_table active_task_table %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Create a new task-->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-lg font-weight-bold text-primary text-uppercase mb-1 card-title">NEW TASK</div>
+                        </div>
+                        <div>
+                            <form method="post"}>
+                                {{ new_task_form | crispy }}
+                                {% csrf_token %}
+                                <button class="btn btn-primary">Create Task</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
 {% endblock %}
