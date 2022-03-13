@@ -120,9 +120,9 @@ class TaskDashboardViewTests(TestCase):
 
         self.assertEqual(response.context['current_estimated_time'], '35 mins')
     
-    def test_todays_tasks_paginates_after_six_tasks(self):
+    def test_todays_tasks_paginates_after_ten_tasks(self):
         """
-        Having more than 6 active tasks causes table to paginate.
+        Having more than 10 active tasks causes table to paginate.
         Note: there's an advanced way to make this happen with Selenium.
         For now, I'm going to simply test to see if the page is
         still valid when it has 'page=2' in the URL.
@@ -132,8 +132,8 @@ class TaskDashboardViewTests(TestCase):
         user = self.User.objects.get()
         assert user.is_authenticated
 
-        # Create 6 tasks, which should not paginate the table
-        for i in range(6):
+        # Create 10 tasks, which should not paginate the table
+        for i in range(10):
             create_task(user=user)
         dashboard_url = reverse('dashboard')
         paginate_url = f'{dashboard_url}?page=2'
@@ -141,7 +141,7 @@ class TaskDashboardViewTests(TestCase):
         with self.assertRaises(EmptyPage):
             self.client.get(paginate_url)
 
-        # Create a 7th task, which should paginate the table
+        # Create a 11th task, which should paginate the table
         create_task(user=user)
         response = self.client.get(paginate_url)
         self.assertEqual(response.status_code, 200)

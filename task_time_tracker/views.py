@@ -59,7 +59,7 @@ def dashboard(request):
     active_task_table = ActiveTaskTable(active_tasks, request=request)
     active_task_table.paginate(
         page=request.GET.get('page', 1),
-        per_page=6,
+        per_page=10,
     )
 
     # New task form
