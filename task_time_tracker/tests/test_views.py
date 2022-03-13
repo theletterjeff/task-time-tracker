@@ -138,6 +138,34 @@ class TaskDashboardViewTests(TestCase):
 
         self.assertEqual(response.context['current_estimated_time'], '30 mins')
     
+    def test_current_estimate_correct_for_incomplete_null_and_complete(self):
+        """
+        A task queryset with incomplete tasks that have no entered time
+        and completed tasks (with non-null `actual_mins`) calculates
+        `current_estimated_time` correctly.
+        """
+        # Get user, check they're logged in
+        self.assertEqual(len(self.User.objects.all()), 1)
+        user = self.User.objects.get()
+        assert user.is_authenticated
+
+        # Incomplete tasks
+        create_task(expected_mins=150, actual_mins=None, completed=False, user=user)
+        create_task(expected_mins=75, actual_mins=None, completed=False, user=user)
+        create_task(expected_mins=60, actual_mins=None, completed=False, user=user)
+        create_task(expected_mins=40, actual_mins=None, completed=False, user=user)
+        create_task(expected_mins=15, actual_mins=None, completed=False, user=user)
+        create_task(expected_mins=10, actual_mins=None, completed=False, user=user)
+
+        # Complete tasks
+        create_task(expected_mins=15, actual_mins=3, completed=True, user=user)
+        create_task(expected_mins=15, actual_mins=2, completed=True, user=user)
+
+        response = self.client.get(reverse('dashboard'))
+
+        self.assertEqual(response.context['current_estimated_time'], '5 hrs 55 mins')
+
+    
     def test_todays_tasks_paginates_after_ten_tasks(self):
         """
         Having more than 10 active tasks causes table to paginate.
