@@ -116,7 +116,7 @@ class NewTaskView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse('todays_tasks')
+        return reverse('dashboard')
 
 class NewProjectView(LoginRequiredMixin, CreateView):
     model = Project
@@ -130,7 +130,7 @@ class NewProjectView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse('todays_tasks')
+        return reverse('dashboard')
 
 class EditTaskView(LoginRequiredMixin, UpdateView):
     model = Task
@@ -143,7 +143,7 @@ class EditTaskView(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         task = form.save(commit=False)
         task.save()
-        return redirect('todays_tasks')
+        return redirect('dashboard')
 
 class DeleteTaskView(LoginRequiredMixin, DeleteView):
     model = Task

@@ -205,10 +205,9 @@ class SeleniumTests(StaticLiveServerTestCase):
         sleep(1)
         assert Project.objects.filter(name='test_name')
     
-    def test_submit_new_project_form_redirects_to_todays_tasks(self):
+    def test_submit_new_project_form_redirects_to_dashboard(self):
         """
-        Filling and submitting a project redirects to the page for
-        today's tasks
+        Filling and submitting a project redirects to the page for dashboard
         """
         new_project_url = '%s%s' % (self.live_server_url, reverse('new_project'))
         self.driver.get(new_project_url)
@@ -224,12 +223,12 @@ class SeleniumTests(StaticLiveServerTestCase):
         # Wait until page redirects
         WebDriverWait(self.driver, 10).until(EC.url_changes(new_project_url))
 
-        todays_tasks_url = '%s%s' % (self.live_server_url, reverse('todays_tasks'))
+        todays_tasks_url = '%s%s' % (self.live_server_url, reverse('dashboard'))
         self.assertEqual(self.driver.current_url, todays_tasks_url)
     
-    def test_task_edit_submit_redirects_to_todays_tasks(self):
+    def test_task_edit_submit_redirects_to_dashboard(self):
         """
-        Editing a task redirects to the page for today's tasks
+        Editing a task redirects to the dashboard page
         """
         # Create a dummy task
         create_task(task_name='task_1')
@@ -250,7 +249,7 @@ class SeleniumTests(StaticLiveServerTestCase):
         # Wait until page redirects
         WebDriverWait(self.driver, 10).until(EC.url_changes(edit_task_url))
 
-        todays_tasks_url = '%s%s' % (self.live_server_url, reverse('todays_tasks'))
+        todays_tasks_url = '%s%s' % (self.live_server_url, reverse('dashboard'))
         self.assertEqual(self.driver.current_url, todays_tasks_url)
 
     ### Log in tests ###
