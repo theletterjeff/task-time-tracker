@@ -68,17 +68,25 @@ class DashboardSummStats(object):
     def _estimated_no_actual_time(self):
         records_no_actual = self.task_queryset.filter(actual_mins=None)
         return get_col_sum(records_no_actual, 'expected_mins')
-    
+
     @property
     def current_estimated_time(self):
-        estimated_no_actual = self.task_queryset.filter(actual_mins=None)
-        estimated_gt_actual = self.task_queryset.filter(expected_mins__gt=F('actual_mins'))
-        estimated_lt_actual = self.task_queryset.filter(expected_mins__lt=F('actual_mins'))
-        return (
-            get_col_sum(estimated_no_actual, 'expected_mins') +
-            get_col_sum(estimated_gt_actual, 'expected_mins') +
-            get_col_sum(estimated_lt_actual, 'actual_mins')
+        incomplete = self.task_queryset.filter(completed=False)
+        complete = self.task_queryset.filter(completed=True)
+
+        incomplete_no_actual = incomplete.filter(actual_mins=None)
+        incomplete_gt_actual = incomplete.filter(expected_mins__gt=F('actual_mins'))
+        incomplete_lt_actual = incomplete.filter(expected_mins__lt=F('actual_mins'))
+        
+        incomplete_total = (
+            get_col_sum(incomplete_no_actual, 'expected_mins') +
+            get_col_sum(incomplete_gt_actual, 'expected_mins') +
+            get_col_sum(incomplete_lt_actual, 'actual_mins')
         )
+
+        complete_total = get_col_sum(complete, 'actual_mins')
+
+        return incomplete_total + complete_total
     
     @property
     def unfinished_time(self):

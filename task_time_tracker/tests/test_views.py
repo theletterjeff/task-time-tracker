@@ -120,6 +120,24 @@ class TaskDashboardViewTests(TestCase):
 
         self.assertEqual(response.context['current_estimated_time'], '35 mins')
     
+    def test_current_estimate_uses_actual_mins_if_actual_lt_expected_and_complete(self):
+        """
+        If a task is completed and the `actual_mins` is less than `expected_mins`,
+        `current_estimate` uses actual_mins.
+        """
+        # Get user, check they're logged in
+        self.assertEqual(len(self.User.objects.all()), 1)
+        user = self.User.objects.get()
+        assert user.is_authenticated
+
+        create_task(expected_mins=10, actual_mins=5, user=user, completed=True)
+        create_task(expected_mins=10, actual_mins=5, user=user, completed=False)
+        create_task(expected_mins=10, actual_mins=15, user=user, completed=False)
+
+        response = self.client.get(reverse('dashboard'))
+
+        self.assertEqual(response.context['current_estimated_time'], '30 mins')
+    
     def test_todays_tasks_paginates_after_ten_tasks(self):
         """
         Having more than 10 active tasks causes table to paginate.
