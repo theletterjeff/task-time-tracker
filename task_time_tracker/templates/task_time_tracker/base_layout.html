@@ -18,13 +18,13 @@
 
 <body>
 
-    <div id="wrapper">
+    <div id="wrapper" class="flex-column flex-sm-row">
 
         <!-- Sidebar -->
 
-        <ul id="side-navbar" class="navbar-nav bg-gradient-primary sidebar sidebar-dark">
+        <ul id="side-navbar" class="navbar-nav bg-gradient-primary sidebar sidebar-dark flex-row flex-sm-column justify-content-around align-items-center justify-content-sm-start px-3">
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'dashboard' %}">
-                <div class="sidebar-brand-icon">
+                <div class="sidebar-brand-icon pl-md-3">
                     <i class="fas fa-stopwatch"></i>
                 </div>
                 <div class="sidebar-brand-text mx-3">Task Time Tracker</div>
@@ -38,7 +38,7 @@
             </li>
 
             <!-- Divider -->
-            <hr class="sidebar-divider my-0">
+            <hr class="sidebar-divider my-0 d-none d-sm-block">
 
             <!-- Nav Item - New Task -->
             <li class="nav-item active">
@@ -48,7 +48,7 @@
             </li>
 
             <!-- Divider -->
-            <hr class="sidebar-divider my-0">
+            <hr class="sidebar-divider my-0 d-none d-sm-block">
 
             <!-- Nav Item - New Project -->
             <li class="nav-item active">
@@ -58,7 +58,7 @@
             </li>
 
             <!-- Divider -->
-            <hr class="sidebar-divider my-0">
+            <hr class="sidebar-divider my-0 d-none d-sm-block">
 
             <!-- Nav Item - Today's Tasks -->
             <li class="nav-item active">
@@ -68,7 +68,7 @@
             </li>
 
             <!-- Divider -->
-            <hr class="sidebar-divider my-0">
+            <hr class="sidebar-divider my-0 d-none d-sm-block">
 
             <!-- Nav Item - Incomplete Tasks -->
             <li class="nav-item active">
@@ -78,7 +78,7 @@
             </li>
 
             <!-- Divider -->
-            <hr class="sidebar-divider my-0">
+            <hr class="sidebar-divider my-0 d-none d-sm-block">
 
         </ul>
         <!-- End of Sidebar -->
@@ -90,15 +90,15 @@
             <div id="content">
 
                 <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow px-0 px-sm-3">
                     
                     <!-- Page Title -->
-                    <div class='col-xl-8'>
+                    <div class='col-xl-6'>
                         <h1 class="navbar-nav" id="page-title">{{ page_title }}</h1>
                     </div>
 
                     <!-- Log In / Log Out -->
-                    <div class='col-xl-4'>
+                    <div class='col-xl-6'>
                         {% if user.is_authenticated %}
                             <p class='login-logout-signup'>
                                 <span class='top-right-content'>Welcome, {{ user.username }}</span>
@@ -115,7 +115,7 @@
                     </div>
                 </nav>
                 
-                <div class="container-fluid">
+                <div class="container-fluid px-2 px-sm-3">
 
                     {% block content %}
                     {% endblock %}

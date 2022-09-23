@@ -113,3 +113,9 @@ ul.pagination li.active a.page-link {
     margin-left: 5px;
     margin-right: 5px;
 }
+
+@media (max-width: 767px) {
+    .nav-link span {
+        display: none !important;
+    }
+}
