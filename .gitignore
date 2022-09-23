@@ -4,3 +4,4 @@ env
 __pycache__
 geckodriver.log
 Procfile.windows
+.DS_Store
