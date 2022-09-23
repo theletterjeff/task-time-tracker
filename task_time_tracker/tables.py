@@ -25,7 +25,14 @@ class AllTaskTable(Table):
 
     class Meta:
         model = Task
-        exclude = ['id', 'active', 'created_date', 'completed_date']
+        fields = [
+            'task_name',
+            'project',
+            'expected_mins',
+            'actual_mins',
+            'completed',
+            'priority',
+        ]
         attrs = {
             'class': dashboard_table_class,
             'id': 'big_task_table',
