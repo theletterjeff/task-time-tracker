@@ -4,29 +4,29 @@
 
 {% block content %}
 
-    <div class="col-xl-8">
+  <div class="col-xl-8">
 
-        {% if form.errors %}
-            <p id="sign-in-error">Sign in error. Please try again.</p>
-        {% endif %}
+    {% if form.errors %}
+      <p id="sign-in-error">Sign in error. Please try again.</p>
+    {% endif %}
 
-        {% if next %}
-            {% if user.is_authenticated %}
-                <p>Sorry! You don't have access to this page.</p>
-            {% else %}
-                <p>Log in to see this page.</p>
-            {% endif %}
-        {% endif %}
+    {% if next %}
+      {% if user.is_authenticated %}
+        <p>Sorry! You don't have access to this page.</p>
+      {% else %}
+        <p>Log in to see this page.</p>
+      {% endif %}
+    {% endif %}
 
-        <form method="POST" action="{% url 'login' %}">
-            {% csrf_token %}
-            {{ form | crispy }}
-            <button type="submit" id="login-button" class="btn btn-primary btn-success btn-margin-bottom">Log In</button>
-            <input type="hidden" name="next" value="{{ next }}" />
-        </form>
-        
-        <p><a href="{% url 'password_reset' %}" id='password-reset'>Reset password</a>
+    <form method="POST" action="{% url 'login' %}">
+      {% csrf_token %}
+      {{ form | crispy }}
+      <button type="submit" id="login-button" class="btn btn-primary btn-success btn-margin-bottom">Log In</button>
+      <input type="hidden" name="next" value="{{ next }}" />
+    </form>
+    
+    <p><a href="{% url 'password_reset' %}" id='password-reset'>Reset password</a>
 
-    </div>
+  </div>
 
 {% endblock %}

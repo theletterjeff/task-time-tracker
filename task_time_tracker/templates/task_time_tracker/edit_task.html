@@ -4,16 +4,16 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-    <div class="col-xl-8">
-        <form method="post" action="">
-            {% csrf_token %}
-            {{ form | crispy }}
-            <button type="submit" class="btn btn-primary btn-success btn-margin-bottom">Update</button>
-        </form>
+  <div class="col-xl-8">
+    <form method="post" action="">
+      {% csrf_token %}
+      {{ form | crispy }}
+      <button type="submit" class="btn btn-primary btn-success btn-margin-bottom">Update</button>
+    </form>
 
-        <form method="POST" action="{{ task.get_delete_task_url }}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-primary btn-success btn-margin-bottom">Delete</button>
-        </form>
-    </div>
+    <form method="POST" action="{{ task.get_delete_task_url }}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-primary btn-success btn-margin-bottom">Delete</button>
+    </form>
+  </div>
 {% endblock %}

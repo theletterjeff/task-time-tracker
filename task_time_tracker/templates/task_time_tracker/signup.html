@@ -4,12 +4,12 @@
 
 {% block content %}
 
-    <div class="col-xl-8">
-        <form action="" method="POST">
-            {% csrf_token %}
-            {{ form | crispy }}
-            <button type="submit" id="signup-submit" class="btn btn-primary btn-success btn-margin-bottom">Sign Up</button>
-        </form>
-    </div>
+  <div class="col-xl-8">
+    <form action="" method="POST">
+      {% csrf_token %}
+      {{ form | crispy }}
+      <button type="submit" id="signup-submit" class="btn btn-primary btn-success btn-margin-bottom">Sign Up</button>
+    </form>
+  </div>
 
 {% endblock %}
