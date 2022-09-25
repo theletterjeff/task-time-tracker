@@ -98,7 +98,7 @@ class Task(models.Model):
             )
         super(Task, self).save(*args, **kwargs)
 
-    def edit_task_url(self):
+    def get_edit_task_url(self):
         return reverse('edit_task', kwargs={'pk': self.id})
     
     def get_delete_task_url(self):
