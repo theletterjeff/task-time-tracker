@@ -109,7 +109,7 @@ class NewTaskView(LoginRequiredMixin, CreateView):
     form_class = NewTaskPageForm
     template_name = 'task_time_tracker/new-task.html'
 
-    extra_context = {'page_title': 'Create a New Task'}
+    extra_context = {'page_title': 'New Task'}
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -123,7 +123,7 @@ class NewProjectView(LoginRequiredMixin, CreateView):
     form_class = NewProjectForm
     template_name = 'task_time_tracker/new-project.html'
 
-    extra_context = {'page_title': 'Start a New Project'}
+    extra_context = {'page_title': 'New Project'}
 
     def form_valid(self, form):
         form.instance.user = self.request.user
