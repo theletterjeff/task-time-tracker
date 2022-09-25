@@ -160,11 +160,12 @@ class ActiveTaskView(LoginRequiredMixin, SingleTableView):
         )
 
 class CompletedTaskView(LoginRequiredMixin, SingleTableView):
-    template_name = 'task_time_tarcker/completed_tasks.html'
+    template_name = 'task_time_tracker/completed_tasks.html'
     table_class = CompletedTaskTable
+    extra_context = {'page_title': 'Completed Tasks'}
 
     def get_queryset(self):
-        return Task.objects.filter(user=request.user).filter(completed=True)
+        return Task.objects.filter(user=self.request.user).filter(completed=True)
 
 
 # Authentication Views
