@@ -64,7 +64,7 @@ DATABASES = {
 
 AUTH_USER_MODEL = 'task_time_tracker.User'
 
-LOGIN_REDIRECT_URL = '/todays-tasks/'
+LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
 
 AUTH_PASSWORD_VALIDATORS = [
