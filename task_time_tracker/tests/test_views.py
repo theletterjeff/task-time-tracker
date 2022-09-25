@@ -286,7 +286,7 @@ class TaskDashboardViewTests(TestCase):
         request = request_factory.get(reverse('dashboard'))
         request.user = self.User.objects.get()
         
-        queryset = views.get_todays_tasks(request)
+        queryset = views.get_active_tasks(request)
 
         # Include active tasks (incomplete & completed today)
         # irrespective of creation date
