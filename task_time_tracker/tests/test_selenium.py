@@ -63,25 +63,25 @@ class SeleniumTests(StaticLiveServerTestCase):
     
     ### Dashboard tests ###
 
-    def test_todays_task_title_links_to_dedicated_page(self):
+    def test_active_task_title_links_to_dedicated_page(self):
         """
-        The card title for the "today's task" widget links to the
-        standalone page for all of today's tasks.
+        The card title for the "active task" widget links to the
+        standalone page for all of active tasks.
         """
         # Load dashboard
         self.driver.get('%s%s' % (self.live_server_url, reverse('dashboard')))
 
         # Wait for widget title to appear, then assign it
-        todays_tasks_widget_title = self.driver.find_element_by_id('todays-task-widget-title')
+        active_tasks_widget_title = self.driver.find_element_by_id('active-task-widget-title')
 
         # Widget title should be a link
-        self.assertEqual(todays_tasks_widget_title.tag_name, 'a')
+        self.assertEqual(active_tasks_widget_title.tag_name, 'a')
 
         # Link URL should be to the today's tasks page
-        link_url = todays_tasks_widget_title.get_attribute(name='href')
+        link_url = active_tasks_widget_title.get_attribute(name='href')
         self.assertEqual(
             link_url,
-            self.live_server_url + reverse('todays_tasks')
+            self.live_server_url + reverse('active_tasks')
         )
     
     def test_clicking_on_task_table_column_sorts(self):
@@ -142,8 +142,8 @@ class SeleniumTests(StaticLiveServerTestCase):
             'dashboard',
             'new_task',
             'new_project',
-            'todays_tasks',
-            'inactive_tasks'
+            'active_tasks',
+            'completed_tasks'
         ]
         intended_urls = [reverse(url_name)
                          for url_name
@@ -165,8 +165,8 @@ class SeleniumTests(StaticLiveServerTestCase):
             'Dashboard',
             'New Task',
             'New Project',
-            "Today's Tasks",
-            'Inactive Tasks',
+            "Active Tasks",
+            'Completed Tasks',
         ]
 
         # Test all intended text is in sidebar
@@ -223,8 +223,8 @@ class SeleniumTests(StaticLiveServerTestCase):
         # Wait until page redirects
         WebDriverWait(self.driver, 10).until(EC.url_changes(new_project_url))
 
-        todays_tasks_url = '%s%s' % (self.live_server_url, reverse('dashboard'))
-        self.assertEqual(self.driver.current_url, todays_tasks_url)
+        dashboard_url = '%s%s' % (self.live_server_url, reverse('dashboard'))
+        self.assertEqual(self.driver.current_url, dashboard_url)
     
     def test_task_edit_submit_redirects_to_dashboard(self):
         """
@@ -249,8 +249,8 @@ class SeleniumTests(StaticLiveServerTestCase):
         # Wait until page redirects
         WebDriverWait(self.driver, 10).until(EC.url_changes(edit_task_url))
 
-        todays_tasks_url = '%s%s' % (self.live_server_url, reverse('dashboard'))
-        self.assertEqual(self.driver.current_url, todays_tasks_url)
+        dashboard_url = '%s%s' % (self.live_server_url, reverse('dashboard'))
+        self.assertEqual(self.driver.current_url, dashboard_url)
 
     ### Log in tests ###
 
@@ -463,7 +463,7 @@ class SeleniumTests(StaticLiveServerTestCase):
             'background-size': 'cover',
             'display': 'flex',
             'flex-direction': 'column',
-            'padding-left': '0px',
+            'padding-left': '16px',
             'list-style': 'none',
         }
         

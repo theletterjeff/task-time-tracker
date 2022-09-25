@@ -166,7 +166,7 @@ class TaskDashboardViewTests(TestCase):
         self.assertEqual(response.context['current_estimated_time'], '5 hrs 55 mins')
 
     
-    def test_todays_tasks_paginates_after_ten_tasks(self):
+    def test_active_tasks_paginates_after_ten_tasks(self):
         """
         Having more than 10 active tasks causes table to paginate.
         Note: there's an advanced way to make this happen with Selenium.
@@ -221,7 +221,7 @@ class TaskDashboardViewTests(TestCase):
         """
         included_fields = [
             'task_name',
-            'task_category',
+            'project',
             'task_notes',
             'expected_mins',
             'priority',
@@ -257,9 +257,9 @@ class TaskDashboardViewTests(TestCase):
         
         self.assertEqual(Task.objects.get(task_name='test task').user, user)
     
-    def test_get_todays_tasks_function_returns_correct_queryset(self):
+    def test_get_active_tasks_function_returns_correct_queryset(self):
         """
-        The function `get_todays_tasks` from the views module
+        The function `get_active_tasks` from the views module
         returns active incomplete tasks regardless of creation date
         and active completed tasks if they were completed today
         (excluding those completed before today)
@@ -481,8 +481,8 @@ class NewProjectViewTests(TestCase):
         field_label_dict = {
             'name': 'Name',
             'description': 'Description',
-            'start_date': 'Start Date',
-            'end_date': 'End Date',
+            'start_date': 'Start date',
+            'end_date': 'End date',
         }
         for field, label in field_label_dict.items():
             # Fields are correct
@@ -545,7 +545,7 @@ class NewProjectViewTests(TestCase):
 
         self.assertEqual(Project.objects.get(name='test project').user, user)
 
-class TodaysTasksViewTests(TestCase):
+class ActiveTasksViewTests(TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -599,7 +599,7 @@ class TodaysTasksViewTests(TestCase):
 
             create_task(**kwargs)
 
-        response = self.client.get(reverse('todays_tasks'))
+        response = self.client.get(reverse('active_tasks'))
         context_queryset = response.context['task_list']
 
         self.assertEqual(len(context_queryset), 2)
@@ -614,7 +614,7 @@ class TodaysTasksViewTests(TestCase):
         self.assertTrue('task_3' not in task_names)
         self.assertTrue('task_4' not in task_names)
     
-    def test_todays_tasks_only_includes_tasks_from_logged_in_users(self):
+    def test_active_tasks_only_includes_tasks_from_logged_in_users(self):
         """
         The queryset for the today's task view does not
         include tasks from a user who is not logged in
@@ -637,110 +637,7 @@ class TodaysTasksViewTests(TestCase):
         self.client.login(username='username_2', password='password_2')
 
         # Get queryset
-        response = self.client.get(reverse('todays_tasks'))
-        context_queryset = response.context['task_list']
-
-        self.assertEqual(len(context_queryset), 1)
-
-        task_names = [task.task_name for task in context_queryset]
-
-        self.assertTrue('user2_task' in task_names)
-        self.assertFalse('user1_task' in task_names)
-
-
-class InactiveTasksViewTests(TestCase):
-
-    @classmethod
-    def setUpClass(cls):
-        """Create a user"""
-        super().setUpClass()
-
-        cls.credentials = {
-            'username': 'username',
-            'password': 'password',
-        }
-        cls.User = get_user_model()
-        cls.User.objects.create_user(**cls.credentials)
-    
-    @classmethod
-    def tearDownClass(cls):
-        """Delete the user"""
-        cls.User.objects.get(
-            username=cls.credentials['username']
-        ).delete()
-
-        super().tearDownClass()
-
-    def setUp(self):
-        """Log user in"""
-        super().setUp()
-        self.client.login(**self.credentials)
-
-    def test_context_filled_w_inactive_incomplete_tasks(self):
-        """
-        View contains inactive, incomplete tasks and excludes inactive tasks.
-        """
-        # Get user
-        self.assertEqual(len(self.User.objects.all()), 1)
-        user = self.User.objects.get()
-
-        # Set kwargs
-        task_names = [f'task_{i}' for i in range(1, 5)]
-        active_statuses = [True, True, False, False]
-        completed_statuses = [False, True, False, True]
-
-        data = list(zip(task_names, active_statuses, completed_statuses))
-        param_names = ['task_name', 'active', 'completed']
-
-        for i in range(4):
-
-            # Zip a particular set up kwargs up with kwarg names
-            kwargs = dict(zip(param_names, data[i]))
-
-            # Add user to kwargs
-            kwargs['user'] = user
-
-            create_task(**kwargs)
-
-        response = self.client.get(reverse('inactive_tasks'))
-        context_queryset = response.context['task_list']
-
-        self.assertEqual(len(context_queryset), 1)
-        
-        task_names = [task.task_name for task in context_queryset]
-
-        # Includes inactive, incomplete tasks
-        self.assertTrue('task_3' in task_names)
-
-        # Excludes inactive tasks
-        self.assertTrue('task_1' not in task_names)
-        self.assertTrue('task_2' not in task_names)
-        self.assertTrue('task_4' not in task_names)
-
-    def test_inactive_tasks_only_includes_tasks_from_logged_in_users(self):
-        """
-        The queryset for the inactive task view does not
-        include tasks from a user who is not logged in
-        """
-        # Get old user
-        self.assertEqual(len(self.User.objects.all()), 1)
-        user_1 = self.User.objects.get()
-
-        # Create new user
-        user_2 = self.User.objects.create(username='username_2')
-        user_2.set_password('password_2')
-        user_2.save()
-
-        # Create a task for old and new user
-        create_task(task_name='user1_task', active=False, user=user_1)
-        create_task(task_name='user2_task', active=False, user=user_2)
-
-        # Log out old user; log in new user
-        self.client.logout()
-        self.client.login(username='username_2', password='password_2')
-
-        # Get queryset
-        response = self.client.get(reverse('inactive_tasks'))
+        response = self.client.get(reverse('active_tasks'))
         context_queryset = response.context['task_list']
 
         self.assertEqual(len(context_queryset), 1)

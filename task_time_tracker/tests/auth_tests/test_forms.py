@@ -64,16 +64,16 @@ class LoginFormTests(TestCase):
         form = SiteLoginView.form_class(data=bad_credentials)
         self.assertFalse(form.is_valid())
 
-    def test_login_page_redirects_to_todays_tasks(self):
+    def test_login_page_redirects_to_dashboard(self):
         """
-        Submitting the login form redirects to the today's task page
+        Submitting the login form redirects to the dashboard page.
         """
         response = self.client.post(
             reverse('login'),
             data=self.credentials,
             follow=True,
         )
-        self.assertRedirects(response, reverse('todays_tasks'))
+        self.assertRedirects(response, reverse('dashboard'))
     
     def test_error_text_on_invalid_login(self):
         """
