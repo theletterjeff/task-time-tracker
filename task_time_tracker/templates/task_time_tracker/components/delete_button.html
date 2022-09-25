@@ -1,4 +1,4 @@
-{% csrf_token %}
-<a href="{{ record.get_delete_task_url }}">
+<form method="POST" action="{{ record.get_delete_task_url }}">
+  {% csrf_token %}
   <button class="btn btn-primary">Delete</button>
-</a>
+</form>

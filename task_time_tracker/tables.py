@@ -4,7 +4,7 @@ from .models import Task
 
 dashboard_table_class = 'table table-striped table-hover table-sm'
 
-class ActiveTaskTable(Table):
+class DashboardTaskTable(Table):
     """Note: must pass request argument to enable column sorting"""
     class Meta:
         model = Task
@@ -18,8 +18,14 @@ class ActiveTaskTable(Table):
             'class': dashboard_table_class,
             'id': 'active-task-table',
         }
-    
-    edit = TemplateColumn(template_name='task_time_tracker/components/edit_button.html')
+    edit = TemplateColumn(
+        verbose_name='',
+        template_name='task_time_tracker/components/edit_button.html',
+    )
+    delete = TemplateColumn(
+        verbose_name='',
+        template_name='task_time_tracker/components/delete_button.html',
+    )
 
 class AllTaskTable(Table):
 

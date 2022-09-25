@@ -24,7 +24,7 @@ from .forms import (NewProjectForm,
                     SitePasswordResetForm,
                     SiteUserCreationForm)
 from .models import Project, Task, User
-from .tables import ActiveTaskTable, AllTaskTable
+from .tables import DashboardTaskTable, AllTaskTable
 from .utils.model_helpers import DashboardSummStats, format_time
 
 logger = logging.getLogger(__name__)
@@ -56,7 +56,7 @@ def dashboard(request):
 
     # Read in task data, format table
     active_tasks = get_todays_tasks(request).order_by('completed', '-expected_mins')
-    active_task_table = ActiveTaskTable(active_tasks, request=request)
+    active_task_table = DashboardTaskTable(active_tasks, request=request)
     active_task_table.paginate(
         page=request.GET.get('page', 1),
         per_page=10,
@@ -148,7 +148,6 @@ class EditTaskView(LoginRequiredMixin, UpdateView):
 class DeleteTaskView(LoginRequiredMixin, DeleteView):
     model = Task
     success_url = reverse_lazy('dashboard')
-    template_name = 'edit_task.html'
     context_object_name = 'task'
 
 class TodaysTaskView(LoginRequiredMixin, SingleTableView):
