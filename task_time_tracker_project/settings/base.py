@@ -18,7 +18,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crispy_forms',
-    'django_q',
     'django_tables2',
 ]
 
@@ -99,14 +98,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 WHITENOISE_USE_FINDERS = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# Scheduled tasks
-Q_CLUSTER = {
-    'name': 'task_time_tracker_project',
-    'timeout': 30,
-    'retry': 60,
-    'orm': 'default',
-}
 
 # Bootstrap styling
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
