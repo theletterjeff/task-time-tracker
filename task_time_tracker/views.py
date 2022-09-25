@@ -24,12 +24,12 @@ from .forms import (NewProjectForm,
                     SitePasswordResetForm,
                     SiteUserCreationForm)
 from .models import Project, Task, User
-from .tables import DashboardTaskTable, AllTaskTable
+from .tables import DashboardTaskTable, AllTaskTable, CompletedTaskTable
 from .utils.model_helpers import DashboardSummStats, format_time
 
 logger = logging.getLogger(__name__)
 
-def get_todays_tasks(request):
+def get_active_tasks(request):
     """
     Return active incomplete and complete tasks, excluding tasks that were
     completed before today.
@@ -55,7 +55,7 @@ def dashboard(request):
     page_title = 'Dashboard'
 
     # Read in task data, format table
-    active_tasks = get_todays_tasks(request).order_by('completed', '-expected_mins')
+    active_tasks = get_active_tasks(request).order_by('completed', '-expected_mins')
     active_task_table = DashboardTaskTable(active_tasks, request=request)
     active_task_table.paginate(
         page=request.GET.get('page', 1),
@@ -99,10 +99,6 @@ def all_tasks(request):
     all_task_list = Task.objects.all()
     output = ', '.join([task.task_name for task in all_task_list])
     return HttpResponse(output)
-
-def task_detail(request, task_id):
-    task_str = get_object_or_404(Task, pk=task_id)
-    return HttpResponse(f'Detail page for {task_str}.')
 
 class NewTaskView(LoginRequiredMixin, CreateView):
     model = Task
@@ -150,37 +146,26 @@ class DeleteTaskView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('dashboard')
     context_object_name = 'task'
 
-class TodaysTaskView(LoginRequiredMixin, SingleTableView):
-    template_name = 'task_time_tracker/todays-tasks.html'
+class ActiveTaskView(LoginRequiredMixin, SingleTableView):
+    template_name = 'task_time_tracker/active-tasks.html'
     table_class = AllTaskTable
 
-    extra_context = {'page_title': "Today's Tasks"}
+    extra_context = {'page_title': "Active Tasks"}
 
     def get_queryset(self):
         """Only show tasks created by logged-in user"""
-        return get_todays_tasks(self.request).order_by(
+        return get_active_tasks(self.request).order_by(
             'completed',
             '-priority',
         )
 
-class InactiveTaskView(LoginRequiredMixin, SingleTableView):
-    template_name = 'task_time_tracker/todays-tasks.html'
-    table_class = AllTaskTable
-
-    extra_context = {'page_title': 'Inactive Tasks'}
+class CompletedTaskView(LoginRequiredMixin, SingleTableView):
+    template_name = 'task_time_tarcker/completed_tasks.html'
+    table_class = CompletedTaskTable
 
     def get_queryset(self):
-        """Only show tasks created by logged-in user"""
-        return Task.objects.filter(
-                user=self.request.user
-            ).filter(
-                active=False
-            ).filter(
-                completed=False
-            ).order_by(
-                '-created_date',
-                '-priority'
-            )
+        return Task.objects.filter(user=request.user).filter(completed=True)
+
 
 # Authentication Views
 
