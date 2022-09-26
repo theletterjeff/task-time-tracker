@@ -597,15 +597,15 @@ class ActiveTasksViewTests(TestCase):
         response = self.client.get(reverse('active_tasks'))
         context_queryset = response.context['task_list']
 
-        self.assertEqual(len(context_queryset), 2)
+        self.assertEqual(len(context_queryset), 1)
         
         task_names = [task.task_name for task in context_queryset]
 
-        # Includes active tasks
+        # Includes active incomplete tasks
         self.assertTrue('task_1' in task_names)
-        self.assertTrue('task_2' in task_names)
 
-        # Excludes inactive tasks
+        # Excludes inactive tasks and completed tasks
+        self.assertTrue('task_2' not in task_names)
         self.assertTrue('task_3' not in task_names)
         self.assertTrue('task_4' not in task_names)
     

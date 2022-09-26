@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 import logging
 
 from django.contrib.auth import views as auth_views
@@ -29,17 +29,23 @@ from .utils.model_helpers import DashboardSummStats, format_time
 
 logger = logging.getLogger(__name__)
 
-def get_active_tasks(request):
+def get_todays_tasks(request):
     """
     Return active incomplete and complete tasks, excluding tasks that were
     completed before today.
     """
-    return Task.objects.filter(
-        user=request.user
-    ).filter(
-        active=True
-    ).exclude(
-        taskstatuschange__completed_datetime__date__lt=timezone.now().date()
+    return (Task.objects
+                .filter(user=request.user)
+                .filter(active=True)
+                .exclude(completed_date__lt=timezone.now() - timedelta(days=1))
+    )
+
+def get_active_tasks(request):
+    """Return active tasks that have not been completed."""
+    return (Task.objects
+                .filter(user=request.user)
+                .filter(active=True)
+                .exclude(completed=True)
     )
 
 @login_required
@@ -55,9 +61,9 @@ def dashboard(request):
     page_title = 'Dashboard'
 
     # Read in task data, format table
-    active_tasks = get_active_tasks(request).order_by('completed', '-expected_mins')
-    active_task_table = DashboardTaskTable(active_tasks, request=request)
-    active_task_table.paginate(
+    todays_tasks = get_todays_tasks(request).order_by('completed', '-expected_mins')
+    dashboard_task_table = DashboardTaskTable(todays_tasks, request=request)
+    dashboard_task_table.paginate(
         page=request.GET.get('page', 1),
         per_page=10,
     )
@@ -74,7 +80,7 @@ def dashboard(request):
         new_task_form = NewTaskForm()
 
     # Summary stats
-    summ_stats = DashboardSummStats(active_tasks)
+    summ_stats = DashboardSummStats(todays_tasks)
 
     # initial_estimated_time = format_time(summ_stats.initial_estimated_time)
     current_estimated_time = format_time(summ_stats.current_estimated_time)
@@ -86,7 +92,7 @@ def dashboard(request):
     context = {
         'page_title': page_title,
         'new_task_form': new_task_form,
-        'active_task_table': active_task_table,
+        'active_task_table': dashboard_task_table,
         'summ_stats_obj': summ_stats,
         'initial_estimated_time': format_time(summ_stats.initial_estimated_time),
         'current_estimated_time': current_estimated_time,
