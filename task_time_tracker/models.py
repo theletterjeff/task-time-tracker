@@ -78,7 +78,14 @@ class Task(models.Model):
     
     def save(self, *args, **kwargs):
         """Create TaskActivity instance if active changes"""
-        # Active
+        self.check_active_status()
+        self.check_completed_status()
+        super(Task, self).save(*args, **kwargs)
+    
+    def check_active_status(self):
+        """Check if the `.active` property of the instance changed. If so, 
+        create a TaskStatusChange instance.
+        """
         if self.old_active == False and self.active == True:
             TaskStatusChange.objects.create(
                 task=self,
@@ -89,14 +96,23 @@ class Task(models.Model):
                 task=self,
                 inactive_datetime=timezone.now(),
             )
-        
-        # Completed
+
+    def check_completed_status(self):
+        """Check if the `.completed` property of the instanced changed. If so, 
+        create a TaskStatusChange instance and update the `.completed_date` 
+        property.
+        """
         if self.old_completed == False and self.completed == True:
-            TaskStatusChange.objects.create(
+            status_change = TaskStatusChange.objects.create(
                 task=self,
                 completed_datetime=timezone.now(),
             )
-        super(Task, self).save(*args, **kwargs)
+            self.completed_date = status_change.completed_datetime
+
+        elif self.old_completed == True and self.completed == False:
+            TaskStatusChange.objects.create(task=self)
+            self.completed_date = None
+
 
     def get_edit_task_url(self):
         return reverse('edit_task', kwargs={'pk': self.id})
