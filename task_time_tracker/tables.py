@@ -59,3 +59,5 @@ class CompletedTaskTable(Table):
             'completed_date',
         ]
         attrs = {'class': dashboard_table_class}
+    
+    edit = TemplateColumn(template_name='task_time_tracker/components/edit_button.html')
