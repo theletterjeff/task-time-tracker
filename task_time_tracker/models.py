@@ -80,6 +80,7 @@ class Task(models.Model):
         """Create TaskActivity instance if active changes"""
         self.check_active_status()
         self.check_completed_status()
+        self.enforce_completed_active_exclusivity()
         super(Task, self).save(*args, **kwargs)
     
     def check_active_status(self):
@@ -112,7 +113,11 @@ class Task(models.Model):
         elif self.old_completed == True and self.completed == False:
             TaskStatusChange.objects.create(task=self)
             self.completed_date = None
-
+    
+    def enforce_completed_active_exclusivity(self):
+        """If `completed` is `True`, set `active` to False."""
+        if self.completed == True:
+            self.active = False
 
     def get_edit_task_url(self):
         return reverse('edit_task', kwargs={'pk': self.id})
