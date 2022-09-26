@@ -44,6 +44,9 @@
     padding-bottom: 1rem;
     color: rgb(206, 102, 18) !important;
 }
+.card-title a {
+    color: rgb(206, 102, 18) !important;    
+}
 #todays-task-widget-title {
     color: rgb(206, 103, 18) !important;
 }
