@@ -5,7 +5,7 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.shortcuts import get_object_or_404, redirect, render
@@ -36,8 +36,10 @@ def get_todays_tasks(request):
     """
     return (Task.objects
                 .filter(user=request.user)
-                .filter(active=True)
-                .exclude(completed_date__lt=timezone.now() - timedelta(days=1))
+                .filter(
+                    Q(active=True) 
+                    | Q(completed_date__gt=timezone.now() - timedelta(days=1))
+                )
     )
 
 def get_active_tasks(request):
