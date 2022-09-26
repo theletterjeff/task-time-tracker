@@ -5,3 +5,4 @@ __pycache__
 geckodriver.log
 Procfile.windows
 .DS_Store
+.vscode/
