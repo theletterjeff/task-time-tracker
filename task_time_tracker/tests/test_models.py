@@ -85,6 +85,14 @@ class TaskModelTests(TestCase):
         project = create_project()
         task = create_task(project=project)
         self.assertEqual(task.project, project)
+    
+    def test_get_edit_url(self):
+        """
+        The `get_edit_url` model method returns the correct URL.
+        """
+        task = create_task()
+        target_url = f'/edit-task/{task.pk}/'
+        self.assertEqual(task.get_edit_task_url(), target_url)
 
 class ProjectModelTests(TestCase):
 
