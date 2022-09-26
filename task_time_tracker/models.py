@@ -78,10 +78,10 @@ class Task(models.Model):
     
     def save(self, *args, **kwargs):
         """Create TaskActivity instance if active changes"""
+        super(Task, self).save(*args, **kwargs)
         self.check_active_status()
         self.check_completed_status()
         self.enforce_completed_active_exclusivity()
-        super(Task, self).save(*args, **kwargs)
     
     def check_active_status(self):
         """Check if the `.active` property of the instance changed. If so, 
@@ -103,12 +103,15 @@ class Task(models.Model):
         create a TaskStatusChange instance and update the `.completed_date` 
         property.
         """
-        if self.old_completed == False and self.completed == True:
+        completed_changed = self.old_completed == False and self.completed == True
+        completed_wo_date = self.completed and not self.completed_date
+        
+        if completed_changed or completed_wo_date:
+            self.completed_date = timezone.now()
             status_change = TaskStatusChange.objects.create(
                 task=self,
-                completed_datetime=timezone.now(),
+                completed_datetime=self.completed_date,
             )
-            self.completed_date = status_change.completed_datetime
 
         elif self.old_completed == True and self.completed == False:
             TaskStatusChange.objects.create(task=self)
