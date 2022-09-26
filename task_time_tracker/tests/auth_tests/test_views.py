@@ -7,6 +7,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
 from bs4 import BeautifulSoup
+import pytest
 
 from task_time_tracker.forms import SitePasswordResetForm
 
@@ -123,7 +124,7 @@ class PasswordResetViewTests(TestCase):
         )
         self.assertEqual(len(mail.outbox), 0)
     
-    @tag('in_progress')
+    @pytest.mark.xfail()
     def test_pw_reset_correct_subject_line(self):
         """
         Password reset email's subject line is
