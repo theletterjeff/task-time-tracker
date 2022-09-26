@@ -260,9 +260,7 @@ class TaskDashboardViewTests(TestCase):
     def test_get_active_tasks_function_returns_correct_queryset(self):
         """
         The function `get_active_tasks` from the views module
-        returns active incomplete tasks regardless of creation date
-        and active completed tasks if they were completed today
-        (excluding those completed before today)
+        returns active incomplete tasks regardless of creation date.
         """
         yesterday = timezone.now() - timezone.timedelta(days=1)
 
@@ -292,12 +290,9 @@ class TaskDashboardViewTests(TestCase):
         # irrespective of creation date
         self.assertIn(task1, queryset)
         self.assertIn(task2, queryset)
-        self.assertIn(task3, queryset)
 
-        # Exclude task that was completed before today
-        self.assertNotIn(task4, queryset)
-
-        # Exclude inactive tasks
+        # Exclude inactive and completed tasks
+        self.assertNotIn(task3, queryset)
         self.assertNotIn(task5, queryset)
         self.assertNotIn(task6, queryset)
         
