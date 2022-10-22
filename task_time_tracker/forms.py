@@ -68,7 +68,6 @@ class NewTaskForm(forms.ModelForm):
         )
         widgets = {
             'task_name': styles['short_input'],
-            'project': styles['short_input'],
             'task_notes': styles['long_input'],
             'expected_mins': styles['num_input'],
         }
