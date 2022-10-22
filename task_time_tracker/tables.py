@@ -44,7 +44,10 @@ class AllTaskTable(Table):
             'id': 'big_task_table',
         }
     
-    edit = TemplateColumn(template_name='task_time_tracker/components/edit_button.html')
+    edit = TemplateColumn(
+        verbose_name='',
+        template_name='task_time_tracker/components/edit_button.html',
+    )
 
 class CompletedTaskTable(Table):
     class Meta:
@@ -60,4 +63,7 @@ class CompletedTaskTable(Table):
         ]
         attrs = {'class': dashboard_table_class}
     
-    edit = TemplateColumn(template_name='task_time_tracker/components/edit_button.html')
+    edit = TemplateColumn(
+        verbose_name='',
+        template_name='task_time_tracker/components/edit_button.html',
+    )
