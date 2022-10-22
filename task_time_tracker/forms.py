@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import models
 from django.contrib.auth.forms import (PasswordResetForm,
                                        UserCreationForm)
 
@@ -57,6 +58,10 @@ class NewProjectForm(forms.ModelForm):
         return self.cleaned_data
 
 class NewTaskForm(forms.ModelForm):
+    project = models.ModelChoiceField(
+        queryset=Project.objects.all(),
+        empty_label='—',
+    )
     class Meta:
         model = Task
         fields = (
