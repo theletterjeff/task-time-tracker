@@ -12,6 +12,10 @@ styles = {
 }
 
 class NewTaskPageForm(forms.ModelForm):
+    project = models.ModelChoiceField(
+        queryset=Project.objects.all(),
+        empty_label='—',
+    )
     class Meta:
         model = Task
         fields = (
