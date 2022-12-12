@@ -12,15 +12,10 @@ styles = {
 }
 
 class NewTaskPageForm(forms.ModelForm):
-    project = models.ModelChoiceField(
-        queryset=Project.objects.all(),
-        empty_label='—',
-    )
     class Meta:
         model = Task
         fields = (
             'task_name',
-            'project',
             'priority',
             'task_category',
             'task_notes',
@@ -29,7 +24,6 @@ class NewTaskPageForm(forms.ModelForm):
         )
         labels = {
             'task_name': 'Name',
-            'project': 'Project',
             'priority': 'Priority',
             'task_category': 'Categories',
             'task_notes': 'Notes/Description',
@@ -62,15 +56,10 @@ class NewProjectForm(forms.ModelForm):
         return self.cleaned_data
 
 class NewTaskForm(forms.ModelForm):
-    project = models.ModelChoiceField(
-        queryset=Project.objects.all(),
-        empty_label='—',
-    )
     class Meta:
         model = Task
         fields = (
             'task_name',
-            'project',
             'task_notes',
             'expected_mins',
             'priority',

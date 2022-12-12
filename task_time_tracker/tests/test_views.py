@@ -221,7 +221,6 @@ class TaskDashboardViewTests(TestCase):
         """
         included_fields = [
             'task_name',
-            'project',
             'task_notes',
             'expected_mins',
             'priority',
@@ -351,7 +350,6 @@ class NewTaskViewTests(TestCase):
         response = self.client.get(reverse('new_task'))
         field_label_dict = {
             'task_name': 'Name',
-            'project': 'Project',
             'priority': 'Priority',
             'task_category': 'Categories',
             'task_notes': 'Notes/Description',
@@ -377,7 +375,6 @@ class NewTaskViewTests(TestCase):
         response = self.client.get(reverse('new_task'))
         fields = (
             'task_name',
-            'project',
             'priority',
             'task_category',
             'task_notes',
