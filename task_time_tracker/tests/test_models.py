@@ -67,7 +67,7 @@ class TaskModelTests(TestCase):
         self.assertEqual(task_high.get_priority_display(), 'High')
         self.assertEqual(task_med.get_priority_display(), 'Medium')
         self.assertEqual(task_low.get_priority_display(), 'Low')
-        self.assertEqual(task_none.get_priority_display(), '--')
+        self.assertEqual(task_none.get_priority_display(), '—-')
     
     def test_new_task_has_project_attribute(self):
         """
